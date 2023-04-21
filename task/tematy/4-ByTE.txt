@@ -1,0 +1,106 @@
+The ByTE Faculty of the Bajtocjan University of Technology is the best
+university teaching computer science in the country. The faculty is
+divided into rooms where classes are held. Each room is assigned a unique
+number (positive int), typee of room (string type - "laboratory", "training",
+"lecture", "other") list of classes taking place in it along with their
+dates (list of * classes*). Each class held on ByTE has a unique name (string), subject code (string), duration
+in lesson units (non-negative int) and a list of *teachers* and *students*.
+Each lecturer has names (string list), surname (string), rank (string - "KiB",
+"MiB", "GiB" and "TiB"), his code (string) in the BitTEX system and the
+list of classes he teaches. Each student has similar fields, except for
+the degree, instead of the list of classes, he has a list of classes he
+attends, additionally he also has a field specifying the semester of study
+(positive integer). In addition, each lecturer can be a student in some classes.
+
+Possible representations:
+	0 - Base representation. Objects with references - references are used for connections between objects.
+		Room
+			- number (int)
+			- type (enum)
+			- classes (list of class ref)
+			
+		Class
+			- name (string)
+			- code (string)
+			- duration (int)
+			- teachers (list of teachers refs)
+			- students (list of students refs)
+			
+		Teacher
+			- names (list string)
+			- surname (string)
+			- rank (enum)
+			- code (string)
+			- classes (list of classes refs)
+		
+		Student
+			- names (list string)
+			- surname (string)
+			- semester (int)
+			- code (string)
+			- classes (list of classes refs)
+			
+	1. Objects with indexes - like 0. but instead of references objects use unique code (string)
+	corresponding to referenced object.
+
+	2. Text - all objects are represented as single string containing all the data in format specified below.
+	References to objects are handled like 1.
+		Room - "<number>(<type>),(<class code>),..."
+		Class - "<name>#<code>(<duration>)^<teacher code>,...$<student code>,..."
+		Teacher - "<surname>,<name>...*<rank>(<code>)^<class code>,..."
+		Student - "<surname>,<name>...@<semester>(<code>)^<class code>,..."
+		
+		Notation used:
+			<-> - value ( - is a name of field)
+			[-] - optional ( - is a name of field)
+			-,... - possible repetitions ( - is a string of tokens that can logically repeat)
+
+	3. Partial text - some fields contain nonatomic data. Mix between objects with references and text representations.
+	References to objects are handled like 1.
+		Room
+			- number (int)
+			- type (string)
+			- classes "(<class code>),..."
+
+		Class
+			- name (string)
+			- code (string)
+			- duration (int)
+			- people "<teacher code>,...$<student code>,..."
+			
+		Teacher
+			- identity "<surname>,<name>,..."
+			- rank (string)
+			- code (string)
+			- classes "<class code>,..."
+			
+		Student
+			- identity "<surname>,<name>,..."
+			- semester (int)
+			- code (string)
+			- classes "<class code>,..."
+
+
+	4. Hashmap - representation like 1., but every non-reference field is key (int) in common map int->string. 
+	Each key is C# hash of that string (using builtin C# hash).
+
+	5. Semi-binary format: Each class have additional field named "data" which is array of bytes. Rest is like 
+	in 1., but instead of each field we have "<fieldname>_addr" and "<fieldname_count>". "<fieldname>_addr" 
+	is address (index) of data of that field in array "data" and "<fieldname_count>" is number of elements 
+	(in case of list type - number of elements, otherwise 1, if element is optional it may be 0 and _addr doesn't matter).
+
+	6.Each class contain id (int) and map string->string.
+	Representation is similar to 1. but data is accesed as string in that map.
+	For simple types the key is field name and value is field value as string. For array types there are keys
+	"fieldname.Size()" to get number of elements of array and "fieldname[i]" to get given element of array (all as string).
+
+	7. Representation like 1. but class have only list of pairs (fieldname, value). 
+	So have List<Tuple<string, Object>> to represent each object. That value of type Object must 
+	be casted to propter type to be used.
+
+	8. All objects are represented as pairs Tuple<int,Stack<string>>, where the first item is the corresponding object's ID, same as in representation 1.
+	The second item is a stack, where data is stored as follows:
+	1) push field value (or all IDs of referenced objects),
+	2) push 1 (or the number of referenced object IDs),
+	3) push field name,
+	4) repeat for the other fields, in the same order as listed in the base representation (0).

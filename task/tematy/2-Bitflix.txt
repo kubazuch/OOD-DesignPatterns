@@ -1,0 +1,96 @@
+Bajtocja is very excited about the recent release of a new platform
+for watching movies and series - Bitflix. Bitflix allows you to watch
+movies that are described by duration (int), release year (int),
+genre (string) and director (author). The platform also offers series
+that are only described by genre (string) and showrunner (author)
+and consist of episodes that have a duration (int), release year (int)
+and director (author). The authors of films and series (directors and showrunners)
+also have additional information in the form of first name (string)
+and surname (string), year of birth (int) and the number of awards received (int).
+
+Possible representations:
+	0 - Base representation. Objects with references - references are used for connections between objects.
+		Movie
+			- title (string)
+			- genre (string)
+			- director (author ref)
+			- releaseYear (int)
+			- duration (int)
+			
+		Series
+			- title (string)
+			- genre (string)
+			- showrunner (author ref)
+			- episodes (list of episodes refs)
+			
+		Episode
+			- title (string)
+			- duration (int)
+			- releaseYear (int)
+			- director (author ref)
+		
+		Author
+			- name (string)
+			- surname (string)
+			- birthYear (int)
+			- awards (int)
+			
+	1. Objects with indexes - like 0. but each type is stored in separate map (keyed by int).
+	Instead of references objects store ID(int) corresponding to referenced object.
+
+	2. Text - all objects are represented as single string containing all the data in format specified below.
+	References to objects are handled like 1.
+		Movie - "<title>;<genre>(<releaseYear>/<duration>)@(<author id>)"
+		Series - "<title>;<genre>@(<showrunner id>)-(<episode id>),..."
+		Episode - "<title>/<duration>(<releaseYear>);(<author id>)"
+		Author - "<name>+<surname>+<birthYear>^<awards>^"
+		
+		Notation used:
+			<-> - value ( - is a name of field)
+			[-] - optional ( - is a name of field)
+			-,... - possible repetitions ( - is a string of tokens that can logically repeat)
+		
+	3. Partial text - some fields contain nonatomic data. Mix between objects with references and text representations.
+	References to objects are handled like 1.
+		Film
+			- title - "<title>(<releaseYear>)"
+			- genre (string)
+			- director "<author id>"
+			- duration (int)
+			
+		Serial
+			- title - "<title>/<genre>" 
+			- showrunner "<author id>"
+			- episodes "<episode id>,..."
+			
+		Episode
+			- title (string)
+			- duration (int)
+			- releaseYear (int)
+			- director "<author id>"
+			
+		Author - "<name>+<surname>+<birhYear>^<awards>^"
+
+	4. Hashmap - representation like 1., but every non-reference field is key (int) in common map int->string. 
+	Each key is C# hash of that string (using builtin C# hash).
+
+	5. Semi-binary format: Each class have additional field named "data" which is array of bytes. Rest is like 
+	in 1., but instead of each field we have "<fieldname>_addr" and "<fieldname_count>". "<fieldname>_addr" 
+	is address (index) of data of that field in array "data" and "<fieldname_count>" is number of elements 
+	(in case of list type - number of elements, otherwise 1, if element is optional it may be 0 and _addr doesn't matter).
+
+	6.Each class contain id (int) and map string->string.
+	Representation is similar to 1. but data is accesed as string in that map.
+	For simple types the key is field name and value is field value as string. For array types there are keys
+	"fieldname.Size()" to get number of elements of array and "fieldname[i]" to get given element of array (all as string).
+
+	7. Representation like 1. but class have only list of pairs (fieldname, value). 
+	So have List<Tuple<string, Object>> to represent each object. That value of type Object must 
+	be casted to propter type to be used.
+
+	8. All objects are represented as pairs Tuple<int,Stack<string>>, where the first item is the corresponding object's ID, same as in representation 1.
+	The second item is a stack, where data is stored as follows:
+	1) push field value (or all IDs of referenced objects),
+	2) push 1 (or the number of referenced object IDs),
+	3) push field name,
+	4) repeat for the other fields, in the same order as listed in the base representation (0).

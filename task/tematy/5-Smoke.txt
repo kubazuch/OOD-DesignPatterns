@@ -1,0 +1,98 @@
+The Smoke platform is the most popular online gaming platform in Bitotia.
+There are many *games* available on the platform that are characterized by
+name (string), genre (string), author list (*users* list), reviews (*reviews*
+list), mods (*mods* list) and device for which a given game written (string -
+like PC computers, bitbox or bytestation). Each review consists of a text
+(string), a rating (an integer from 1 to 16, in Byteotia it is the most
+popular rating system) and the author of the given review (*user*). Each
+*mod* contains a description (string), a list of authors (*users*) and a list
+of *mods* with which the authors guarantee compatibility. Each user is
+described by a nickname (string) and a list of *games* owned.
+
+Possible representations:
+	0 - Base representation. Objects with references - references are used for connections between objects.
+		Game
+			- name (string)
+			- genre (string)
+			- authors (list of users refs)
+			- reviews (list of reviews refs)
+			- mods (list of mods refs)
+			- devices (string)
+			
+		Review
+			- text (string)
+			- rating (int 1-16)
+			- author (user ref)
+
+		Mod
+			- name (string)
+			- description (string)
+			- authors (list of users refs)
+			- compatibility (list of mods refs)
+
+		User
+			- nickname (string)
+			- ownedGames (list of games refs)
+			
+	1. Objects with indexes - like 0. but instead of references objects use
+	name (or nickname for users) corresponding to referenced object. Reviews are stored
+	in map (keyed by string), which key is used to reference review.
+
+	2. Text - all objects are represented as single string containing all the data in format specified below.
+	References to objects are handled like 1.
+		Game - "<name>(<genre>)^<device>@<author nickname>,...%<review id>,...$<mod name>,..."
+		Review - "<text>$$<rating>$$(<author nickname>)"
+		Mod - "<name>#<description>#<author nickname>,...(<mod name>,...)"
+		User - "<nickname>+<game name>,..."
+		
+		Notation used:
+			<-> - value ( - is a name of field)
+			[-] - optional ( - is a name of field)
+			-,... - possible repetitions ( - is a string of tokens that can logically repeat)
+
+	3. Partial text - some fields contain nonatomic data. Mix between objects with references and text representations.
+	References to objects are handled like 1.
+		Game
+			- name (string)
+			- genre (string)
+			- device (string)
+			- reviews "<review id>,..."
+			- mods "<mod name>,..."
+			- authors "<author nickname>,..."
+			
+		Review - "<text>$$<rating>$$(<authors nickname>)"
+
+		Mod
+			- name (string)
+			- description (string)
+			- author "<author nickname>"
+			- compatibility "<mod name>"
+
+		User
+			- nickname (string)
+			- ownedGames "<game name>,..."
+
+
+	4. Hashmap - representation like 1., but every non-reference field is key (int) in common map int->string. 
+	Each key is C# hash of that string (using builtin C# hash).
+
+	5. Semi-binary format: Each class have additional field named "data" which is array of bytes. Rest is like 
+	in 1., but instead of each field we have "<fieldname>_addr" and "<fieldname_count>". "<fieldname>_addr" 
+	is address (index) of data of that field in array "data" and "<fieldname_count>" is number of elements 
+	(in case of list type - number of elements, otherwise 1, if element is optional it may be 0 and _addr doesn't matter).
+
+	6.Each class contain id (int) and map string->string.
+	Representation is similar to 1. but data is accesed as string in that map.
+	For simple types the key is field name and value is field value as string. For array types there are keys
+	"fieldname.Size()" to get number of elements of array and "fieldname[i]" to get given element of array (all as string).
+
+	7. Representation like 1. but class have only list of pairs (fieldname, value). 
+	So have List<Tuple<string, Object>> to represent each object. That value of type Object must 
+	be casted to propter type to be used.
+
+	8. All objects are represented as pairs Tuple<int,Stack<string>>, where the first item is the corresponding object's ID, same as in representation 1.
+	The second item is a stack, where data is stored as follows:
+	1) push field value (or all IDs of referenced objects),
+	2) push 1 (or the number of referenced object IDs),
+	3) push field name,
+	4) repeat for the other fields, in the same order as listed in the base representation (0).

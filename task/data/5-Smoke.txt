@@ -1,0 +1,36 @@
+﻿Smoke
+
+
+Game - name, genre, authors, reviews, mods, devices
+1. Garbage Collector, simulation, [], [], [1], PC
+2. Universe of Technology, 4X, [], [3], [1,3], bitnix
+3. Moo, rogue-like, [2], [2,4], [1,2,3], bitstation
+4. Tickets Please, platformer, [1], [1], [1,3,4], bitbox
+5. Cosmic, MOBA, [5], [5], [1,5], cross platform
+
+
+Review - text, rating, author
+1. “I’m Commander Shepard and this is my favorite game on Smoke”, 10, Commander Shepard
+2. “The Moo remake sets a new standard for the future of the survival horror series⁠, even if it isn't the sequel I've been pining for.”, 12, Driver
+3. “Universe of Technology is a spectacular 4X game, that manages to shine even when the main campaign doesn't.”, 15, lemon
+4. “Moo’s interesting art design can't save it from its glitches, bugs, and myriad terrible game design decisions, but I love its sound design”, 2, Bonet
+5. “I've played this game for years nonstop. Over 8k hours logged (not even joking). And I'm gonna tell you: at this point, the game's just not worth playing anymore. I think it hasn't been worth playing for a year or two now, but I'm only just starting to realize it. It breaks my heart to say that, but that's just the truth of the matter.”, 5, Szredor
+
+
+Mod - name, description, authors, compatibility
+1. “Clouds”, “Super clouds”, [Pek], [2,3,4,5]
+2. “T-pose”, “Cow are now T-posing”, [Rondo], [1, 3]
+3. “Commander Shepard”, “I’m Commander Shepard and this is my favorite mod on Smoke”, [Commander Shepard], [1, 2, 4]
+4. “BTM”, “You can now play in BTM’s trains and bytebuses”, [lemon, Bonet], [1, 3]
+5. “Cosmic - black hole edition”, “Adds REALISTIC black holes”, [Driver], [1]
+
+
+User - nickanme, ownedGames
+1. Szredor, [1, 2, 3, 4, 5]
+2. Driver, [1, 2, 3, 4, 5]
+3. Pek, [1, 2, 3, 4, 5]
+4. Commander Shepard, [1, 2, 4]
+5. MLG, [1, 5]
+6. Rondo, [1]
+7. lemon, [3, 4]
+8. Bonet, [2]

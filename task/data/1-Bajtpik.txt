@@ -1,0 +1,44 @@
+﻿Bajtpik
+
+
+Book - title, authors, year, pageCount
+
+1. The Hitchhiker's Guide to the Galaxy, Douglas Adams, 1987, 320
+2. The Right Stuff, Tom Wolfe, 1993, 512
+3. Real-Time Shadows, [Eisemann, Schwarz, Assarsson, Wimmer], 2011, 383
+4. Mesjasz Diuny, Frank Herbert, 1972, 272
+5. Dobry Omen, [Terry Pratchett, Neil Gaiman], 1990, 416
+
+
+Newspaper - title, year, pageCount
+
+1. International Journal of Human-Computer Studies, MaxValue, 300
+2. Nature, 1869, 200
+3. National Geographic, 2001, 106
+4. Pixel. 2015, 115
+
+
+BoardGame - title, minPlayers, maxPlayers, difficulty, authors
+
+1. “Scythe”, 1, 5, 7, [Jamey Stegmaier, Jakub Różalski]
+2. “Catan”, 3, 4, 6, Klaus Teuber
+3. “Scrabble”, 2, 4, 5, [James Brunot, Alfred Butts]
+4. “Twilight Imperium”, 3, 8, 9, Christian T. Petersen
+
+
+Author - name, surname, birthYear, nickname
+1. Douglas, Adams, 1952
+2. Tom, Wolfe, 1930
+3. Elmar, Eisemann, 1978
+4. Michael, Schwarz, 1970
+5. Ulf, Assarsson, 1975
+6. Michael, Wimmer, 1980
+7. Frank, Herbert, 1920
+8. Terry, Pratchett, 1948
+9. Neil, Gaiman, 1960
+10. Jamey, Stegmaier, 1975
+11. Jakub, Różalski, 1981, “Mr. Werewolf”
+12. Klaus, Teuber, 1952
+13. Alfred, Butts, 1899
+14. James, Brunot, 1902
+15. Christian T., Petersen, 1970

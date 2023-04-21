@@ -1,0 +1,112 @@
+In Bytezaria, the largest city of Byteotia founded in binary 1011111001 by
+King Byte II, there is public transport consisting of bytebuses and trambits.
+BTM (Byteasar urban transport) is divided into lines, each line is described
+by a hexadecimal number (written as a string) and the same number written in
+decimal format (positive int), additionally each line has a colloquial name
+(string) used by Byteasars, for each the line is assigned a list of *stops*
+and a list of *vehicles* (buses and trams). Each stop has an id (positive
+int), a list of *lines* that use it, a name (string) and a string indicating
+whether it is a bus or tram stop ("bus", "tram", "other"). The vehicle can be
+either a bytebus or a trambit. A bytobus has an id (positive int), a list of
+*lines* it runs on and a motor class (string - "Byte5", "bisel20" and
+"gibgaz". Each tram has an id (positive int), number of cars (positive int)
+and * line* to which it is assigned. Since vehicles are not autonomous, they
+must be driven by drivers. Each driver has a list of *vehicles* they drive,
+name (string), surname (string) and seniority in years (positive int).
+
+Possible representations:
+	0 - Base representation. Objects with references - references are used for connections between objects.
+		Line
+			- numberHex (string)
+			- numberDec (int)
+			- commonName (string)
+			- stops (list of stops refs)
+			- vehicles (list of vehicles refs)
+			
+		Stop
+			- id (int)
+			- lines (list of lines refs)
+			- name (string)
+			- type (enum string)
+			
+		Bytebus : Vehicle
+			- id (int)
+			- lines (list of lines refs)
+			- engineClass (enum string)
+		
+		Tram : Vehicle
+			- id (int)
+			- carsNumber (int)
+			- line (line ref)
+
+		Driver
+			- vehicles (list of vehicles refs)
+			- name (string)
+			- surname (string)
+			- seniority (int)
+			
+	1. Objects with indexes - like 0. but instead of references objects use
+	id or numberDec corresponding to referenced object.
+
+	2. Text - all objects are represented as single string containing all the data in format specified below.
+	References to objects are handled like 1.
+		Line - "<numerHex>(<numerDec>)`<commonName>`@<stop id>,...!<vehicle id>,..."
+		Stop - "#<id>(<line id>,...)<name>/<typ>"
+		Bytebus - "#<id>^<engineClass>*<line id>,..."
+		Tram - "#<id>(<carsNumber>)<line id>,..."
+		Driver - "<name> <surname>(<seniority>)@<vehicle id>,..."
+		
+		Notation used:
+			<-> - value ( - is a name of field)
+			[-] - optional ( - is a name of field)
+			-,... - possible repetitions ( - is a string of tokens that can logically repeat)
+
+	3. Partial text - some fields contain nonatomic data. Mix between objects with references and text representations.
+	References to objects are handled like 1.
+		Line
+			- number "<numerHex>(<numerDec>)"
+			- commonName (string)
+			- stops "<stop id>,..."
+			- vehicles "<vehicle id>,..."
+			
+		Stop
+			- name "(<id>)<name>"
+			- type (enum string)
+			- lines "<line id>,..."
+			
+		Bytebus
+			- engineClass (enum string)
+			- description "#<id>*<line id>,..."
+
+		Tram
+			- lines "<line id>,..."
+			- description "#<id>(<wagony>)"
+			
+		Driver
+			- identity "<surname>,<name>"
+			- seniority (int)
+			- vehicles "<vehicle id>,..."
+
+	4. Hashmap - representation like 1., but every non-reference field is key (int) in common map int->string. 
+	Each key is C# hash of that string (using builtin C# hash).
+
+	5. Semi-binary format: Each class have additional field named "data" which is array of bytes. Rest is like 
+	in 1., but instead of each field we have "<fieldname>_addr" and "<fieldname_count>". "<fieldname>_addr" 
+	is address (index) of data of that field in array "data" and "<fieldname_count>" is number of elements 
+	(in case of list type - number of elements, otherwise 1, if element is optional it may be 0 and _addr doesn't matter).
+
+	6.Each class contain id (int) and map string->string.
+	Representation is similar to 1. but data is accesed as string in that map.
+	For simple types the key is field name and value is field value as string. For array types there are keys
+	"fieldname.Size()" to get number of elements of array and "fieldname[i]" to get given element of array (all as string).
+
+	7. Representation like 1. but class have only list of pairs (fieldname, value). 
+	So have List<Tuple<string, Object>> to represent each object. That value of type Object must 
+	be casted to propter type to be used.
+
+	8. All objects are represented as pairs Tuple<int,Stack<string>>, where the first item is the corresponding object's ID, same as in representation 1.
+	The second item is a stack, where data is stored as follows:
+	1) push field value (or all IDs of referenced objects),
+	2) push 1 (or the number of referenced object IDs),
+	3) push field name,
+	4) repeat for the other fields, in the same order as listed in the base representation (0).

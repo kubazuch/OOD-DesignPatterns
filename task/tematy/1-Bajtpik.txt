@@ -1,0 +1,88 @@
+In the bookstore called Bajtpik you can find a wide selection of books
+and newspapers. Each book is described by the title (string), authors,
+year of publication (int), number of pages (int) and literary genre
+(string). Newspapers, on the other hand, contain only the title (string),
+the year of publication (int) and the number of pages (int). Recently,
+the bookstore has expanded its offer with board games, which also have
+authors and additionally the minimum and maximum number of players (int)
+along with the level of difficulty (int). Product authors are described
+by name (string) and surname (string), year of birth (int) and nickname
+(if they have one) (string).
+
+Possible representations:
+	0 - Base representation. Objects with references - references are used for connections between objects.
+		Book
+			- title (string)
+			- authors (list of authors refs)
+			- year (int)
+			- pageCount (int)
+		Newspapers
+			- title (string)
+			- year (int)
+			- pageCount (int)
+		BoardGame
+			- title (string)
+			- minPlayers (int)
+			- maxPlayers (int)
+			- difficulty (int)
+			- authors (list of authors refs)
+		Author
+			- name (string)
+			- surname (string)
+			- birthYear (int)
+			- nickname (string?)
+
+	1. Objects with indexes - like 0. but each type is stored in separate map (keyed by int).
+	Instead of references objects store ID(int) corresponding to referenced object.
+
+	2. Text - all objects are represented as single string containing all the data in format specified below.
+	References to objects are handled like 1.
+		Book - "<title>;<year>(<pageCount>);(<author id>),..."
+		Newspapers - "<title>(<year>)+<pageCount>"
+		BoardGame - "<title>/<minPlayers>-<maxPlayers>%<difficulty>;(<author id>),..."
+		Author - "<name>+<surname>+<birthYear>[$<nickname>$]"
+
+		Notation used:
+			<-> - value ( - is a name of field)
+			[-] - optional ( - is a name of field)
+			-,... - possible repetitions ( - is a string of tokens that can logically repeat)
+
+	3. Partial text - some fields contain nonatomic data. Mix between objects with indexes and text representations.
+	References to objects are handled like 1.
+		Book
+			- title - "<title>(<year>)"
+			- authors "(<author id>),..."
+			- pageCount (int)
+		Newspapers
+			- title - "<title>/<year>" 
+			- pageCount (int)
+		BoardGame
+			- title (string)
+			- players - "<minPlayers>/<maxPlayers>"
+			- difficulty (int)
+			- authors "(<author id>),..."
+		Author - "<name>+<surname>+<birthYear>$<nickname>$"
+
+	4. Hashmap - representation like 1., but every non-reference field is key (int) in common map int->string. 
+	Each key is C# hash of that string (using builtin C# hash).
+
+	5. Semi-binary format: Each class have additional field named "data" which is array of bytes. Rest is like 
+	in 1., but instead of each field we have "<fieldname>_addr" and "<fieldname_count>". "<fieldname>_addr" 
+	is address (index) of data of that field in array "data" and "<fieldname_count>" is number of elements 
+	(in case of list type - number of elements, otherwise 1, if element is optional it may be 0 and _addr doesn't matter).
+
+	6.Each class contain id (int) and map string->string.
+	Representation is similar to 1. but data is accesed as string in that map.
+	For simple types the key is field name and value is field value as string. For array types there are keys
+	"fieldname.Size()" to get number of elements of array and "fieldname[i]" to get given element of array (all as string).
+
+	7. Representation like 1. but class have only list of pairs (fieldname, value). 
+	So have List<Tuple<string, Object>> to represent each object. That value of type Object must 
+	be casted to propter type to be used.
+
+	8. All objects are represented as pairs Tuple<int,Stack<string>>, where the first item is the corresponding object's ID, same as in representation 1.
+	The second item is a stack, where data is stored as follows:
+	1) push field value (or all IDs of referenced objects),
+	2) push 1 (or the number of referenced object IDs),
+	3) push field name,
+	4) repeat for the other fields, in the same order as listed in the base representation (0).

@@ -1,0 +1,48 @@
+﻿ZOO
+
+
+Enclosure - name, animals, employee
+1. 311, [Penguin, Python, Panda], Ricardo Stallmano
+2. Break, [Cat, Goper, Meerkat], Steve Irvin
+3. Jurasic Park, [Kakapo, Bengal Tiger, Dungeness Crab], Steve Irvin
+
+
+Animal - name, age, species
+1. Harold, 2, Meerkat
+2. Ryan, 1, Meerkat
+3. Jenkins, 15, Kakapo
+4. Kaka, 10, Kakapo
+5. Ada, 13, Bengal Tiger
+6. Jett, 2, Panda
+7. Conda, 4, Python
+8. Samuel, 2, Python
+9. Claire, 2, Dungeness Crab
+10. Andy, 3, Gopher
+11. Arrow, 5, Cats
+12. Arch, 1, Penguin
+13. Ubuntu, 1, Penguin
+14. Fedora, 1, Penguin
+
+
+Species - name, favuriteFoods
+1. Meerkat, [Meerkat]
+2. Kakapo, []
+3. Bengal Tiger, [Panda, Gopher, Cats]
+4. Panda, []
+5. Python, [Panda, Bengal Tiger]
+6. Dungeness Crab, [Python]
+7. Gopher, []
+8. Cats, [Gopher]
+9. Penguin [Bengal Tiger]
+
+
+Emplyee - name, surname, age, enclosures
+1. Ricardo, Stallmano, 73, [311]
+2. Steve, Irvin, 43, [Break, Jurasic Park]
+
+
+Visitor - name, surname, visitedEnclosures
+1. Tomas German, [311, Break]
+2. Silvester Ileen, [Jurasic Park]
+3. Basil Bailey, [311, Jurasic Park]
+4. Ryker Polly, [Break]
