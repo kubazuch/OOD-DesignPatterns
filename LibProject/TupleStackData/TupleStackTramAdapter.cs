@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -40,12 +41,23 @@ namespace BTM.TupleStackData
             TupleStackRepresentation.VEHICLES.Add(Id, this);
         }
 
+        public override object GetValueByName(string name)
+        {
+            switch (name)
+            {
+                case "id":
+                    return Id;
+                case "carsNumber":
+                    return CarsNumber;
+                default:
+                    throw new ArgumentException($"Unknown field: {name}");
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(Id).Append(", ");
-            builder.Append(CarsNumber).Append(", ");
-            builder.Append(Line.NumberDec);
+            builder.Append("Tram #").Append(Id).Append(", cars: ").Append(CarsNumber).Append(", line: ").Append(Line.NumberDec);
             return builder.ToString();
         }
     }

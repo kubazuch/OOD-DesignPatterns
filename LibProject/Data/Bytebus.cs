@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -28,12 +29,24 @@ namespace BTM.Data
             line.Vehicles.Add(this);
         }
 
+        public object GetValueByName(string name)
+        {
+            switch (name)
+            {
+                case "id":
+                    return Id;
+                case "engineClass":
+                    return EngineClass;
+                default:
+                    throw new ArgumentException($"Unknown field: {name}");
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(Id).Append(", ");
-            builder.Append('[').AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("], ");
-            builder.Append(EngineClass);
+            builder.Append("ByteBus #").Append(Id).Append(", engine class: ").AppendLine(EngineClass);
+            builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
             return builder.ToString();
         }
     }

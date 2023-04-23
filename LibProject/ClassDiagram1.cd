@@ -1,309 +1,329 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BTM.Line" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24.75" Y="0.5" Width="1.5" />
+  <Class Name="BTM.Collections.Algorithms" Collapsed="true">
+    <Position X="17.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CIABAAAQAAAAgAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAABAIAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Collections\Algorithms.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.Collections.Collection&lt;T&gt;" Collapsed="true">
+    <Position X="11" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAABAAQAAAAAAAAAAAAAAEAAAAAAAAAAE=</HashCode>
+      <FileName>Collections\Collection.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BTM.Collections.DoublyLinkedList&lt;T&gt;" Collapsed="true">
+    <Position X="8.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAgQAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAgE=</HashCode>
+      <FileName>Collections\DoublyLinkedList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.Collections.HashMap&lt;T&gt;" Collapsed="true">
+    <Position X="11" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAQAACAAAAAAABAACACAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Collections\HashMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.Collections.Vector&lt;T&gt;" Collapsed="true">
+    <Position X="13.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAQAAAAAADAgABAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Collections\Vector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.Data.Bytebus" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCAAAAAAAAAAAEAAAAAAAAAAAhAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Bytebus.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BTM.Stop" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="21.25" Y="1.5" Width="1.5" />
+  <Class Name="BTM.Data.Driver" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgCAAAAAAAAAAAEAAAAAAQAAAAAAAACAQAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAAAAAgAAAAAgAAEAAAAAAQABAABAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Data\Driver.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BTM.Bytebus" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="21.25" Y="0.5" Width="1.5" />
+  <Class Name="BTM.Data.Line" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAgCAAAAAAAAAAAEAAAAAAAAAAAgAAACAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>CIABAAAQAAAAgAAEAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Line.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BTM.Tram" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="23" Y="1.5" Width="1.5" />
+  <Class Name="BTM.Data.Stop" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAABAAAAAAEAAABAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAgCAAAAAAAAAAAEAAAAAAQAAAABAAACAQAAAAAAAAA=</HashCode>
+      <FileName>Data\Stop.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BTM.Driver" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="23" Y="0.5" Width="1.5" />
+  <Class Name="BTM.Data.Tram" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAgAAEAAAAAAQABAAAAAAAAgAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAACAAAABAAAAAAEAAABAAAAAAABAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Data\Tram.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="BTM.TextRepresentation">
-    <Position X="8" Y="9.5" Width="1.5" />
+  <Class Name="BTM.TextData.TextBytebus" Collapsed="true">
+    <Position X="3" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextBytebus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TextData.TextBytebusAdapter" Collapsed="true">
+    <Position X="2.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAEQAAAAAAAAAAhAAACAAAAAAAAAAI=</HashCode>
+      <FileName>TextData\TextBytebusAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BTM.TextData.TextDriver" Collapsed="true">
+    <Position X="9.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextDriver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TextData.TextDriverAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAgAAAAAgAAEQAAAAAQABAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextDriverAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TextData.TextLine" Collapsed="true">
+    <Position X="0.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextLine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TextData.TextLineAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIABAAAQAAAAgAAEQAAAAAAAAAEBAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextLineAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TextData.TextRepresentation" Collapsed="true">
+    <Position X="5.25" Y="8.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAABAIAAAAAAAAAFAAgAAAAAAQAAgAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
+      <FileName>TextData\TextRepresentation.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BTM.TextLine">
-    <Position X="3.5" Y="13.25" Width="1.5" />
+  <Class Name="BTM.TextData.TextStop" Collapsed="true">
+    <Position X="7.5" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
+      <FileName>TextData\TextStop.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BTM.TextStop">
-    <Position X="5.75" Y="13.25" Width="1.5" />
+  <Class Name="BTM.TextData.TextStopAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAACAAAAAAAAAAAEQAAAAAQAAAABAAACAQAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextStopAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TextData.TextTram" Collapsed="true">
+    <Position X="5.25" Y="11.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
+      <FileName>TextData\TextTram.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BTM.TextVehicle">
-    <Position X="11.5" Y="13.25" Width="1.5" />
+  <Class Name="BTM.TextData.TextTramAdapter" Collapsed="true">
+    <Position X="0.5" Y="13.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TextBytebus">
-    <Position X="10.25" Y="15.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TextTram">
-    <Position X="12.5" Y="15.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TextDriver">
-    <Position X="8" Y="13.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TextLineAdapter" BaseTypeListCollapsed="true">
-    <Position X="0.5" Y="12.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CIABAAAQAAAAgAAEQAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TextStopAdapter" BaseTypeListCollapsed="true">
-    <Position X="3.75" Y="15.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAACAAAAAAAAAAAEQAAAAAQAAAAAAAACAQAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TextVehicleAdapter">
-    <Position X="17.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
+      <HashCode>AAACAAAABgAAAAAEQAAAAAAAAAABAAAAAAAAAAABAAA=</HashCode>
+      <FileName>TextData\TextTramAdapter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TextBytebusAdapter">
-    <Position X="16.25" Y="2.25" Width="1.75" />
+  <Class Name="BTM.TextData.TextVehicle" Collapsed="true">
+    <Position X="4.25" Y="9.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAEQAAAAAAAAAAgAAACAAAAAAAAAAI=</HashCode>
-      <FileName>TextRep.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextVehicle.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
+  </Class>
+  <Class Name="BTM.TextData.TextVehicleAdapter" Collapsed="true">
+    <Position X="1.75" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TextData\TextVehicleAdapter.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TextTramAdapter">
-    <Position X="18.75" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAABgAAAAAEQAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TextDriverAdapter" BaseTypeListCollapsed="true">
-    <Position X="7" Y="15.75" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AIAAAAgAAAAAgAAEQAAAAAQABAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TextRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TupleStackRepresentation">
-    <Position X="8.25" Y="0.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>BAABAIAAAAAAAAAFAAAAAAAAAQAAgAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TupleStackLine">
-    <Position X="3.75" Y="4.25" Width="1.75" />
+  <Class Name="BTM.TupleStackData.TupleStackBytebus" Collapsed="true">
+    <Position X="3" Y="7.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <FileName>TupleStackData\TupleStackBytebus.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BTM.TupleStackStop">
-    <Position X="6.25" Y="4.25" Width="1.75" />
+  <Class Name="BTM.TupleStackData.TupleStackBytebusAdapter" Collapsed="true">
+    <Position X="12.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAEQAAAAAAAAAAhAAACAAAAAAAAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackBytebusAdapter.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TupleStackVehicle">
-    <Position X="11" Y="4.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TupleStackBytebus">
-    <Position X="8.75" Y="6.25" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TupleStackTram">
-    <Position X="11.25" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BTM.TupleStackDriver">
-    <Position X="13.5" Y="6.25" Width="1.5" />
+  <Class Name="BTM.TupleStackData.TupleStackDriver" Collapsed="true">
+    <Position X="9.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <FileName>TupleStackData\TupleStackDriver.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BTM.TupleStackLineAdapter" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="3.75" Width="2" />
+  <Class Name="BTM.TupleStackData.TupleStackDriverAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CIABAAAQAAAAgAAEQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <HashCode>AAAAAAgAAAAAgAAEQAAAAAQABAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackDriverAdapter.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackLine" Collapsed="true">
+    <Position X="0.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackLine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackLineAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIABAAAQAAAAgAAEQAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackLineAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackRepresentation" Collapsed="true">
+    <Position X="5.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAABAIAAAAAAAAAFAAAAAAAAAQAAgAAAAAAAAACAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackRepresentation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackStop" Collapsed="true">
+    <Position X="7.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackStop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackStopAdapter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAEQAAAAAQAAAABAAACAQAAAAAAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackStopAdapter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackTram" Collapsed="true">
+    <Position X="5.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackTram.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BTM.TupleStackData.TupleStackTramAdapter" Collapsed="true">
+    <Position X="14.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAAAAAEQAAAAAAAAAABAAAAAAAAAAABAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackTramAdapter.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TupleStackStopAdapter" BaseTypeListCollapsed="true">
-    <Position X="5.25" Y="1" Width="2" />
+  <Class Name="BTM.TupleStackData.TupleStackVehicle" Collapsed="true">
+    <Position X="4.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAEQAAAAAQAAAAAAAACAQAAAAAAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackVehicle.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TupleStackVehicleAdapter">
-    <Position X="16.75" Y="9.5" Width="2" />
+  <Class Name="BTM.TupleStackData.TupleStackVehicleAdapter" Collapsed="true">
+    <Position X="13.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TupleStackData\TupleStackVehicleAdapter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BTM.TupleStackBytebusAdapter">
-    <Position X="15.25" Y="11.25" Width="2.25" />
+  <Interface Name="BTM.Collections.ICollection" Collapsed="true">
+    <Position X="17.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAEQAAAAAAAAAAgAAACAAAAAAAAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TupleStackTramAdapter">
-    <Position X="18.25" Y="11.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAABAAAAAAEQAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="BTM.TupleStackDriverAdapter" BaseTypeListCollapsed="true">
-    <Position X="16.25" Y="6.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAgAAEQAAAAAQABAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>TupleStackRep.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="adaptee" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Interface Name="BTM.ILine" Collapsed="true">
-    <Position X="23" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CIABAAAQAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Collections\Collection.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BTM.IStop" Collapsed="true">
-    <Position X="24.75" Y="2.75" Width="1.5" />
+  <Interface Name="BTM.IBytebus" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAACAQAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="BTM.IVehicle">
-    <Position X="4.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="BTM.IBytebus">
-    <Position X="5.5" Y="8.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAgAAACAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="BTM.ITram">
-    <Position X="3.25" Y="8.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAACAAAAAAAAAAA=</HashCode>
+      <FileName>IBytebus.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="BTM.IDriver" Collapsed="true">
-    <Position X="21.25" Y="2.75" Width="1.5" />
+    <Position X="5.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAgAAAAAAAAAQABAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BTM.cs</FileName>
+      <FileName>IDriver.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BTM.IEntity" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IEntity.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BTM.ILine" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIABAAAQAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ILine.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BTM.IStop" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAACAQAAAAAAAAA=</HashCode>
+      <FileName>IStop.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BTM.ITram" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>ITram.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="BTM.IVehicle" Collapsed="true">
+    <Position X="2" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IVehicle.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

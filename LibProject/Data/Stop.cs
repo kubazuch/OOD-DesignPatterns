@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -30,13 +31,26 @@ namespace BTM.Data
             line.Stops.Add(this);
         }
 
+        public object GetValueByName(string name)
+        {
+            switch (name)
+            {
+                case "id":
+                    return Id;
+                case "name":
+                    return Name;
+                case "type":
+                    return Type;
+                default:
+                    throw new ArgumentException($"Unknown field: {name}");
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(Id).Append(", ");
-            builder.Append(Name).Append(", ");
-            builder.Append(Type).Append(", ");
-            builder.Append('[').AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append(']');
+            builder.Append("Stop #").Append(Id).Append(", \"").Append(Name).Append("\", type: ").AppendLine(Type);
+            builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
             return builder.ToString();
         }
     }

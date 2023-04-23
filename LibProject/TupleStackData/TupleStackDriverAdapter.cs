@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -59,12 +60,26 @@ namespace BTM.TupleStackData
             TupleStackRepresentation.DRIVERS.Add(adaptee.TupleRepr.Item1, this);
         }
 
+        public object GetValueByName(string name)
+        {
+            switch (name)
+            {
+                case "name":
+                    return Name;
+                case "surname":
+                    return Surname;
+                case "seniority":
+                    return Seniority;
+                default:
+                    throw new ArgumentException($"Unknown field: {name}");
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(Name).Append(' ').Append(Surname).Append(", ");
-            builder.Append(Seniority).Append(", ");
-            builder.Append('[').AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
+            builder.Append(Name).Append(' ').Append(Surname).Append(", ").Append(Seniority).AppendLine(" years of seniority");
+            builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
             return builder.ToString();
         }
     }

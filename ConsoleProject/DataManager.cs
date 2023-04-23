@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BTM;
 using BTM.Collections;
 using BTM.Data;
@@ -11,8 +8,10 @@ using BTM.TupleStackData;
 
 namespace ConsoleProject
 {
-    internal class DataManager
+    public class DataManager
     {
+        public Dictionary<string, ICollection> Mapping { get; }
+
         public Vector<ILine> Lines { get; } = new();
         public Vector<IStop> Stops { get; } = new();
         public Vector<IBytebus> Bytebuses { get; } = new();
@@ -21,6 +20,15 @@ namespace ConsoleProject
 
         public DataManager(DataRepresentation representation)
         {
+            Mapping = new Dictionary<string, ICollection>
+            {
+                ["line"] = Lines,
+                ["stop"] = Stops,
+                ["bytebus"] = Bytebuses,
+                ["tram"] = Trams,
+                ["driver"] = Drivers
+            };
+
             switch (representation)
             {
                 case DataRepresentation.BASE:
@@ -206,7 +214,7 @@ namespace ConsoleProject
             drivers.ForEach(x => Drivers.Add(new TupleStackDriverAdapter(x)));
         }
     }
-    internal enum DataRepresentation
+    public enum DataRepresentation
     {
         BASE,
         TEXT,

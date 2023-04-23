@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BTM
 {
-    public interface ILine
+    public interface ILine : IEntity
     {
         public string NumberHex { get; }
         public int NumberDec { get; }

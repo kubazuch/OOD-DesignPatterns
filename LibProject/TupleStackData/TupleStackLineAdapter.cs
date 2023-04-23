@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -61,14 +62,27 @@ namespace BTM.TupleStackData
             TupleStackRepresentation.LINES.Add(NumberDec, this);
         }
 
+        public object GetValueByName(string name)
+        {
+            switch (name)
+            {
+                case "numberHex":
+                    return NumberHex;
+                case "numberDec":
+                    return NumberDec;
+                case "commonName":
+                    return CommonName;
+                default:
+                    throw new ArgumentException($"Unknown field: {name}");
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append(NumberHex).Append(", ");
-            builder.Append(NumberDec).Append(", ");
-            builder.Append(CommonName).Append(", ");
-            builder.Append('[').AppendJoin(", ", Stops.Select(x => x.Id)).Append(']').Append(", ");
-            builder.Append('[').AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
+            builder.Append("Line 0x").Append(NumberHex).Append(" (").Append(NumberDec).Append("), \"").Append(CommonName).AppendLine("\"");
+            builder.Append("\tStops: [").AppendJoin(", ", Stops.Select(x => x.Id)).AppendLine("]");
+            builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
             return builder.ToString();
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace BTM
 {
-    public interface IVehicle
+    public interface IVehicle : IEntity
     {
         public int Id { get; }
     }

@@ -2,7 +2,7 @@
 
 namespace BTM
 {
-    public interface IDriver
+    public interface IDriver : IEntity
     {
         public List<IVehicle> Vehicles { get; }
         public string Name { get; }

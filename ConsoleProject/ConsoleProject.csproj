@@ -9,8 +9,4 @@
     <ProjectReference Include="..\LibProject\BTM.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CLI\" />
-  </ItemGroup>
-
 </Project>
