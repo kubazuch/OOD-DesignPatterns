@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace BTM.Data
@@ -10,6 +11,8 @@ namespace BTM.Data
         public int Id { get; }
 
         public int CarsNumber { get; }
+
+        public Dictionary<string, Func<object>> Fields { get; }
 
         public ILine Line
         {
@@ -26,19 +29,12 @@ namespace BTM.Data
             Id = id;
             CarsNumber = carsNumber;
             Line = line;
-        }
 
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>()
             {
-                case "id":
-                    return Id;
-                case "carsNumber":
-                    return CarsNumber;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["id"] = () => Id,
+                ["carsNumber"] = () => CarsNumber
+            };
         }
 
         public override string ToString()

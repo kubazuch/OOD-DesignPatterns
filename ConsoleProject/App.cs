@@ -23,37 +23,42 @@ namespace ConsoleProject
             _manager = new DataManager(representation);
             _commandDispatcher = new CommandDispatcher(_manager);
 
-            _commandDispatcher.Register(Command.Named("exit").Calls((_, _) => Stop()));
-            //_commandDispatcher.Register(Command.Named("hello").Calls((_,_) => Console.WriteLine("Hello, world!")));
-            //_commandDispatcher.Register(Command.Named("time").Calls((_,_) => Console.WriteLine($"The current time is {DateTime.Now:hh:mm:ss tt}")));
+            _commandDispatcher.Register(Command.Named("exit").WithDescription("Closes the application.").Calls(_ => Stop()));
             _commandDispatcher.Register(Command.Named("list")
+                .WithDescription("Prints all objects of a particular type.")
+                .WithUsageDetails("The command prints to the console all of the objects of given class where printing an object\nmeans listing all of its non reference fields.")
                 .WithArg(new TypeArgument(true))
-                .Calls((_, args) =>
+                .Calls(args =>
                 {
                     ICollection collection = (ICollection) args[0];
                     Algorithms.ForEach(collection.GetForwardIterator(), Console.WriteLine);
                 }));
             _commandDispatcher.Register(Command.Named("find")
+                .WithDescription("Prints objects matching certain conditions.")
+                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non\nreference fields. They follow format:\n\n\t<name_of_field>=|<|><value>\n\nwhere “=|<|>” means any strong comparison operator. For numerical fields natural comparison will\nbe used. Strings will use a lexicographic order. For other types only “=” is allowed. If a value\nwere to contain spaces it should be placed inside quotation marks.")
                 .WithArg(new TypeArgument(true))
                 .WithVararg(new PredicateArgument(true))
-                .Calls((_, args) =>
+                .Calls(args =>
                 {
                     ICollection collection = (ICollection)args[0];
-                    Predicate<object> predicate = entity =>
+
+                    bool Predicate(object entity)
                     {
                         for (int i = 1; i < args.Count; i++)
-                            if (!((Predicate<IEntity>) args[i])((IEntity)entity))
+                            if (!((Predicate<IEntity>) args[i])((IEntity) entity))
                                 return false;
                         return true;
-                    };
+                    }
 
-                    Algorithms.Print(collection, predicate);
+                    Algorithms.Print(collection, Predicate);
                 }));
         }
 
         public void Start()
         {
             _isRunning = true;
+            Console.WriteLine("Byteasar Urban Transport information system");
+            Console.WriteLine("\nType \"help\" for help");
             Run();
         }
         public void Stop()

@@ -18,7 +18,7 @@ namespace ConsoleProject.CLI.Arguments
 
         public override ICollection Parse(DataManager data, string arg)
         {
-            if (!data.Mapping.ContainsKey(arg)) throw new ArgumentException($"Unknown type: {arg}");
+            if (!data.Mapping.ContainsKey(arg)) throw new ArgumentException($"Unknown type: {arg}. Possible types: {string.Join(", ", data.Mapping.Keys)}");
             return data.Mapping[arg];
         }
     }

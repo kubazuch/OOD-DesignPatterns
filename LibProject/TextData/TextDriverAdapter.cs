@@ -23,22 +23,14 @@ namespace BTM.TextData
         {
             this.adaptee = adaptee;
 
-            TextRepresentation.DRIVERS.Add(TextRepresentation.DRIVERS.Count, this);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>
             {
-                case "name":
-                    return Name;
-                case "surname":
-                    return Surname;
-                case "seniority":
-                    return Seniority;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["name"] = () => Name,
+                ["surname"] = () => Surname,
+                ["seniority"] = () => Seniority
+            };
+
+            TextRepresentation.DRIVERS.Add(TextRepresentation.DRIVERS.Count, this);
         }
 
         public override string ToString()
@@ -49,5 +41,6 @@ namespace BTM.TextData
             return builder.ToString();
         }
 
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

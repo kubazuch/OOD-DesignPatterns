@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using BTM;
-using BTM.Collections;
 
 namespace ConsoleProject.CLI.Arguments
 {
     public class PredicateArgument : CommandArgument<Predicate<IEntity>>
     {
-        private Regex regex = new Regex(@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
+        private Regex regex = new (@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
 
         public PredicateArgument(bool required = false, string name = "requirement")
         {
@@ -34,7 +29,7 @@ namespace ConsoleProject.CLI.Arguments
             return entity =>
             {
                 object field = entity.GetValueByName(name);
-                if ((cmp == "<" || cmp == ">") && !IsNumeric(field) && field is not string)
+                if (cmp is "<" or ">" && !IsNumeric(field) && field is not string)
                     throw new ArgumentException($"Field of type {entity.GetValueByName(name).GetType()} cannot be compared using {cmp}!");
 
                 if (IsNumeric(field) || field is string)
@@ -50,6 +45,7 @@ namespace ConsoleProject.CLI.Arguments
                     }
 
                     var comparable = (IComparable) field;
+                    
                     return cmp switch
                     {
                         "<" => comparable.CompareTo(type) < 0,

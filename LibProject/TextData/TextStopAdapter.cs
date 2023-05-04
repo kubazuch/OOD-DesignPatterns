@@ -23,22 +23,14 @@ namespace BTM.TextData
         {
             this.adaptee = adaptee;
 
-            TextRepresentation.STOPS.Add(Id, this);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>
             {
-                case "id":
-                    return Id;
-                case "name":
-                    return Name;
-                case "type":
-                    return Type;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["id"] = () => Id,
+                ["name"] = () => Name,
+                ["type"] = () => Type
+            };
+
+            TextRepresentation.STOPS.Add(Id, this);
         }
 
         public override string ToString()
@@ -48,5 +40,7 @@ namespace BTM.TextData
             builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
             return builder.ToString();
         }
+
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

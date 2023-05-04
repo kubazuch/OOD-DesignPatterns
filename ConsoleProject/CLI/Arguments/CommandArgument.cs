@@ -9,13 +9,16 @@ namespace ConsoleProject.CLI.Arguments
     public interface ICommandArgument
     {
         public string Name { get; }
+
         public bool Required { get; }
+
         public object Parse(DataManager data, string arg);
     }
 
     public abstract class CommandArgument<T> : ICommandArgument
     {
         public string Name { get; protected set; }
+
         public bool Required { get; protected set; }
 
         object ICommandArgument.Parse(DataManager data, string arg) => Parse(data, arg);

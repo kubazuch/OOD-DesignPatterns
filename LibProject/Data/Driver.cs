@@ -5,8 +5,6 @@ using System.Text;
 
 namespace BTM.Data
 {
-    //--------------------------------------------------//
-
     public class Driver : IDriver
     {
         public List<IVehicle> Vehicles { get; }
@@ -14,32 +12,26 @@ namespace BTM.Data
         public string Surname { get; }
         public int Seniority { get; }
 
+        public Dictionary<string, Func<object>> Fields { get; }
+
         public Driver(string name, string surname, int seniority, params IVehicle[] vehicles)
         {
             Vehicles = new List<IVehicle>(vehicles);
             Name = name;
             Surname = surname;
             Seniority = seniority;
+
+            Fields = new Dictionary<string, Func<object>>()
+            {
+                ["name"] = () => Name,
+                ["surname"] = () => Surname,
+                ["seniority"] = () => Seniority
+            };
         }
 
         public void AddVehicle(IVehicle vehicle)
         {
             Vehicles.Add(vehicle);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
-            {
-                case "name":
-                    return Name;
-                case "surname":
-                    return Surname;
-                case "seniority":
-                    return Seniority;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
         }
 
         public override string ToString()

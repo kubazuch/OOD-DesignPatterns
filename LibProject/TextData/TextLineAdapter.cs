@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace BTM.TextData
 {
@@ -25,22 +26,15 @@ namespace BTM.TextData
         public TextLineAdapter(TextLine adaptee)
         {
             this.adaptee = adaptee;
-            TextRepresentation.LINES.Add(NumberDec, this);
-        }
 
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>
             {
-                case "numberHex":
-                    return NumberHex;
-                case "numberDec":
-                    return NumberDec;
-                case "commonName":
-                    return CommonName;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["numberHex"] = () => NumberHex,
+                ["numberDec"] = () => NumberDec,
+                ["commonName"] = () => CommonName
+            };
+
+            TextRepresentation.LINES.Add(NumberDec, this);
         }
 
         public override string ToString()
@@ -51,5 +45,7 @@ namespace BTM.TextData
             builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
             return builder.ToString();
         }
+
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }
