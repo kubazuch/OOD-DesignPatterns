@@ -1,6 +1,6 @@
 ﻿namespace BTM.Builder
 {
-    public class DriverBuilder
+    public class DriverBuilder : AbstractBuilder
     {
         internal string _name;
         internal string _surname;

@@ -10,12 +10,11 @@ namespace ConsoleProject.CLI.Arguments
     {
         private readonly HashSet<string> _keys;
 
-        public EnumArgument(HashSet<string> arguments, bool required = false, string name = "enum")
+        public EnumArgument(HashSet<string> arguments, bool required = false)
         {
             this._keys = arguments;
             this.Required = required;
             this.IncludeRaw = false;
-            this.Name = name;
         }
 
         public override string Parse(DataManager data, string arg)
@@ -25,18 +24,19 @@ namespace ConsoleProject.CLI.Arguments
 
             return arg;
         }
+
+        public override string ToString() => string.Join('|', _keys);
     }
 
     public class EnumArgument<T> : CommandArgument<T>
     {
         private readonly Dictionary<string, T> _dictionary;
 
-        public EnumArgument(Dictionary<string, T> dictionary, bool required = false, bool includeRaw = false, string name = "enum")
+        public EnumArgument(Dictionary<string, T> dictionary, bool required = false, bool includeRaw = false)
         {
             this._dictionary = dictionary;
             this.Required = required;
             this.IncludeRaw = includeRaw;
-            this.Name = name;
         }
 
         public override T Parse(DataManager data, string arg)
@@ -46,5 +46,7 @@ namespace ConsoleProject.CLI.Arguments
 
             return value;
         }
+
+        public override string ToString() => string.Join('|', _dictionary.Keys);
     }
 }

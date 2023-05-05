@@ -1,6 +1,6 @@
 ﻿namespace BTM.Builder
 {
-    public class StopBuilder
+    public class StopBuilder : AbstractBuilder
     {
         internal int _id;
         internal string _name;

@@ -1,6 +1,6 @@
 ﻿namespace BTM.Builder
 {
-    public class BytebusBuilder
+    public class BytebusBuilder : AbstractBuilder
     {
         internal int _id;
         internal string _engineClass;

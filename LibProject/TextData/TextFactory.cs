@@ -3,30 +3,30 @@ using System;
 
 namespace BTM.TextData
 {
-    public class TextFactory : IFactory
+    public class TextAbstractFactory : AbstractFactory
     {
-        public ILine CreateLine(LineBuilder builder)
+        public override ILine CreateLine(LineBuilder builder)
         {
             return new TextLineAdapter(new TextLine(builder._numberHex, builder._numberDec, builder._commonName,
                 Array.Empty<int>(), Array.Empty<int>()));
         }
 
-        public IDriver CreateDriver(DriverBuilder builder)
+        public override IDriver CreateDriver(DriverBuilder builder)
         {
             return new TextDriverAdapter(new TextDriver(builder._name, builder._surname, builder._seniority));
         }
 
-        public IBytebus CreateBytebus(BytebusBuilder builder)
+        public override IBytebus CreateBytebus(BytebusBuilder builder)
         {
             return new TextBytebusAdapter(new TextBytebus(builder._id, builder._engineClass));
         }
 
-        public IStop CreateStop(StopBuilder builder)
+        public override IStop CreateStop(StopBuilder builder)
         {
             return new TextStopAdapter(new TextStop(builder._id, builder._name, builder._type));
         }
 
-        public ITram CreateTram(TramBuilder builder)
+        public override ITram CreateTram(TramBuilder builder)
         {
             return new TextTramAdapter(new TextTram(builder._id, builder._carsNumber, -1));
         }

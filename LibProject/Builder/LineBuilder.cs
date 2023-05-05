@@ -1,6 +1,6 @@
 ﻿namespace BTM.Builder
 {
-    public class LineBuilder
+    public class LineBuilder : AbstractBuilder
     {
         internal string _numberHex;
         internal int _numberDec;

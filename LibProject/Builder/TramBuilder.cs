@@ -1,6 +1,6 @@
 ﻿namespace BTM.Builder
 {
-    public class TramBuilder
+    public class TramBuilder : AbstractBuilder
     {
         internal int _id;
         internal int _carsNumber;
