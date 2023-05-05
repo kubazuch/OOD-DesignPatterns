@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace BTM.TextData
 {
     public class TextLineAdapter : ILine
     {
         private static Regex LINE = new Regex(@"(?<numerHex>[0-9A-Z]+)\((?<numerDec>[0-9]+)\)`(?<commonName>.+)`@(?:(?<stopid>\d+),?)+!(?:(?<vehicleid>\d+),?)+", RegexOptions.Compiled);
-        
+
         private TextLine adaptee;
 
         public string NumberHex => LINE.Match(adaptee.TextRepr).Groups["numerHex"].Value;
@@ -18,7 +17,7 @@ namespace BTM.TextData
         public int NumberDec => int.Parse(LINE.Match(adaptee.TextRepr).Groups["numerDec"].Value);
         public string CommonName => LINE.Match(adaptee.TextRepr).Groups["commonName"].Value;
         public List<IStop> Stops => LINE.Match(adaptee.TextRepr).Groups["stopid"]
-            .Captures.Select(id => TextRepresentation.STOPS[int.Parse((string) id.Value)]).ToList();
+            .Captures.Select(id => TextRepresentation.STOPS[int.Parse(id.Value)]).ToList();
 
         public List<IVehicle> Vehicles => LINE.Match(adaptee.TextRepr).Groups["vehicleid"]
             .Captures.Select(id => TextRepresentation.VEHICLES[int.Parse(id.Value)]).ToList();

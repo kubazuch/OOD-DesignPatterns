@@ -68,7 +68,7 @@ namespace BTM.Collections
             }
         }
 
-        public int Capacity {get;}
+        public int Capacity { get; }
         public T[] Items { get; }
         private readonly bool[] _filled;
 

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using BTM;
+using System;
 using System.Text.RegularExpressions;
-using BTM;
 
 namespace ConsoleProject.CLI.Arguments
 {
     public class PredicateArgument : CommandArgument<Predicate<IEntity>>
     {
-        private Regex regex = new (@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
+        private Regex regex = new(@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
 
-        public PredicateArgument(bool required = false, string name = "requirement")
+        public PredicateArgument(bool required = false, bool includeRaw = false, string name = "requirement")
         {
             this.Required = required;
+            this.IncludeRaw = includeRaw;
             this.Name = name;
         }
 
@@ -44,8 +45,8 @@ namespace ConsoleProject.CLI.Arguments
                         throw new ArgumentException($"Unable to convert {val} to type {field.GetType()}.", ex);
                     }
 
-                    var comparable = (IComparable) field;
-                    
+                    var comparable = (IComparable)field;
+
                     return cmp switch
                     {
                         "<" => comparable.CompareTo(type) < 0,

@@ -8,7 +8,7 @@ namespace BTM.TextData
     public class TextTramAdapter : TextVehicleAdapter, ITram
     {
         private static Regex TRAM = new Regex(@"#(?<id>\d+)\((?<carsNumber>.+)\)(?<lineid>\d+)", RegexOptions.Compiled);
-        
+
         private TextTram adaptee;
 
         public override int Id => int.Parse(TRAM.Match(adaptee.TextRepr).Groups["id"].Value);

@@ -1,10 +1,8 @@
-﻿using System;
+﻿using ConsoleProject.CLI.Arguments;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using ConsoleProject.CLI.Arguments;
 
 namespace ConsoleProject.CLI
 {
@@ -43,10 +41,14 @@ namespace ConsoleProject.CLI
                 {
                     if (Args[i].Required)
                         throw new ArgumentException($"Missing required argument #{i + 1}: {Args[i].Name}.\n\tUsage: {ToString()}");
+                    if (Args[i].IncludeRaw)
+                        args.Add("");
                     args.Add(null);
                     continue;
                 }
 
+                if (Args[i].IncludeRaw)
+                    args.Add(context[i]);
                 args.Add(Args[i].Parse(data, context[i]));
             }
 
@@ -54,6 +56,8 @@ namespace ConsoleProject.CLI
             {
                 for (; i < context.Count; ++i)
                 {
+                    if (Vararg.IncludeRaw)
+                        args.Add(context[i]);
                     args.Add(Vararg.Parse(data, context[i]));
                 }
             }

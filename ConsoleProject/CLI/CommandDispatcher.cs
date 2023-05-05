@@ -4,14 +4,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ConsoleProject.CLI
 {
     public class CommandDispatcher
     {
         public static readonly string Separator = " ";
-        private static readonly Regex Regex = new (@"[\""].+?[\""]|[^ ]+", RegexOptions.Compiled);
+        private static readonly Regex Regex = new(@"[\""].+?[\""]|[^ ]+", RegexOptions.Compiled);
         private readonly Dictionary<string, Command> _registry;
         private readonly DataManager _data;
 
@@ -32,7 +31,7 @@ namespace ConsoleProject.CLI
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine(c.ToString());
                     Console.ResetColor();
-                    if(c.UsageDetails != null)
+                    if (c.UsageDetails != null)
                         Console.WriteLine('\n' + c.UsageDetails);
                     Console.WriteLine();
                 }
@@ -53,7 +52,7 @@ namespace ConsoleProject.CLI
 
         public void Parse(string line)
         {
-            if(line == "") return;
+            if (line == "") return;
 
             List<string> result = new List<string>();
             bool insideQuotes = false;
@@ -67,14 +66,14 @@ namespace ConsoleProject.CLI
                         insideQuotes = !insideQuotes;
                         continue;
                     case ' ' when !insideQuotes:
-                    {
-                        if (current.Length > 0)
                         {
-                            result.Add(current.ToString());
-                            current = new StringBuilder();
+                            if (current.Length > 0)
+                            {
+                                result.Add(current.ToString());
+                                current = new StringBuilder();
+                            }
+                            continue;
                         }
-                        continue;
-                    }
                     default:
                         current.Append(c);
                         break;

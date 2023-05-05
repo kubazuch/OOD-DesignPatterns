@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BTM;
+﻿using BTM;
 using BTM.Collections;
 using ConsoleProject.CLI;
 using ConsoleProject.CLI.Arguments;
+using System;
 
 namespace ConsoleProject
 {
@@ -30,7 +26,7 @@ namespace ConsoleProject
                 .WithArg(new TypeArgument(true))
                 .Calls(args =>
                 {
-                    ICollection collection = (ICollection) args[0];
+                    ICollection collection = (ICollection)args[0];
                     Algorithms.ForEach(collection.GetForwardIterator(), Console.WriteLine);
                 }));
             _commandDispatcher.Register(Command.Named("find")
@@ -45,7 +41,7 @@ namespace ConsoleProject
                     bool Predicate(object entity)
                     {
                         for (int i = 1; i < args.Count; i++)
-                            if (!((Predicate<IEntity>) args[i])((IEntity) entity))
+                            if (!((Predicate<IEntity>)args[i])((IEntity)entity))
                                 return false;
                         return true;
                     }

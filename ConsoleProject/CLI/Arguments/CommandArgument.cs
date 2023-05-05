@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace ConsoleProject.CLI.Arguments
 {
@@ -12,6 +8,8 @@ namespace ConsoleProject.CLI.Arguments
 
         public bool Required { get; }
 
+        public bool IncludeRaw { get; }
+
         public object Parse(DataManager data, string arg);
     }
 
@@ -20,6 +18,8 @@ namespace ConsoleProject.CLI.Arguments
         public string Name { get; protected set; }
 
         public bool Required { get; protected set; }
+
+        public bool IncludeRaw { get; protected set; }
 
         object ICommandArgument.Parse(DataManager data, string arg) => Parse(data, arg);
 

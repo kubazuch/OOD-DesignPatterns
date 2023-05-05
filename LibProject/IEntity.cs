@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BTM
 {
@@ -12,7 +9,7 @@ namespace BTM
 
         public object GetValueByName(string name)
         {
-            if(!Fields.ContainsKey(name))
+            if (!Fields.ContainsKey(name))
                 throw new ArgumentException($"Unknown field: {name}. Possible types: {string.Join(", ", Fields.Keys)}");
 
             return Fields[name]();
