@@ -20,7 +20,7 @@ namespace BTM.Data
             private init
             {
                 _line = value;
-                value.Vehicles.Add(this);
+                value?.Vehicles.Add(this);
             }
         }
 
@@ -40,7 +40,7 @@ namespace BTM.Data
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("Tram #").Append(Id).Append(", cars: ").Append(CarsNumber).Append(", line: ").Append(Line.NumberDec);
+            builder.Append("Tram #").Append(Id).Append(", cars: ").Append(CarsNumber).Append(", line: ").Append(Line?.NumberDec.ToString() ?? "none");
             return builder.ToString();
         }
     }
