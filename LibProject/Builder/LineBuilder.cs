@@ -5,9 +5,9 @@ namespace BTM.Builder
 {
     public class LineBuilder : AbstractBuilder
     {
-        internal string _numberHex;
-        internal int _numberDec;
-        internal string _commonName;
+        internal string _numberHex = "0";
+        internal int _numberDec = 0;
+        internal string _commonName = "Bus line";
 
         public LineBuilder() : base("line")
         {

@@ -5,8 +5,8 @@ namespace BTM.Builder
 {
     public class TramBuilder : AbstractBuilder
     {
-        internal int _id;
-        internal int _carsNumber;
+        internal int _id = 0;
+        internal int _carsNumber = 2;
 
         public TramBuilder() : base("tram")
         {

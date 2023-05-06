@@ -5,9 +5,9 @@ namespace BTM.Builder
 {
     public class DriverBuilder : AbstractBuilder
     {
-        internal string _name;
-        internal string _surname;
-        internal int _seniority;
+        internal string _name = "John";
+        internal string _surname = "Smith";
+        internal int _seniority = 30;
 
         public DriverBuilder() : base("driver")
         {

@@ -5,8 +5,8 @@ namespace BTM.Builder
 {
     public class BytebusBuilder : AbstractBuilder
     {
-        internal int _id;
-        internal string _engineClass;
+        internal int _id = 0;
+        internal string _engineClass = "Byte5";
 
         public BytebusBuilder() : base("bytebus")
         {

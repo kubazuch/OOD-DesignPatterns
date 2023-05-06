@@ -5,9 +5,9 @@ namespace BTM.Builder
 {
     public class StopBuilder : AbstractBuilder
     {
-        internal int _id;
-        internal string _name;
-        internal string _type;
+        internal int _id = 0;
+        internal string _name = "City Centre";
+        internal string _type = "bus";
 
         public StopBuilder() : base("stop")
         {
