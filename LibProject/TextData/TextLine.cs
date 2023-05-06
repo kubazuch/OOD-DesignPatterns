@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BTM.TextData
+﻿namespace BTM.TextData
 {
     public class TextLine : TextRepresentation
     {

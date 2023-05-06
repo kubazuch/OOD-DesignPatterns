@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using BTM;
+﻿using BTM;
 using BTM.Collections;
 using BTM.Data;
 using BTM.TextData;
 using BTM.TupleStackData;
+using System;
+using System.Collections.Generic;
 
 namespace ConsoleProject
 {
@@ -85,7 +85,7 @@ namespace ConsoleProject
             };
             stops.ForEach(Stops.Add);
 
-            List<Bytebus> bytebuses = new ()
+            List<Bytebus> bytebuses = new()
             {
                 new Bytebus(11, "Byte5", lines[0], lines[1]),
                 new Bytebus(12, "bisel20", lines[0]),

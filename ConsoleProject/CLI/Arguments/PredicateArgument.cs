@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BTM;
+using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using BTM;
-using BTM.Collections;
 
 namespace ConsoleProject.CLI.Arguments
 {
     public class PredicateArgument : CommandArgument<Predicate<IEntity>>
     {
-        private Regex regex = new Regex(@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
+        private Regex regex = new(@"^([^=<>]+)([=<>])([^=<>]+)$", RegexOptions.Compiled);
 
-        public PredicateArgument(bool required = false, string name = "requirement")
+        public PredicateArgument(bool required = false, bool includeRaw = false, string name = "requirement")
         {
             this.Required = required;
+            this.IncludeRaw = includeRaw;
             this.Name = name;
         }
 
@@ -34,7 +30,7 @@ namespace ConsoleProject.CLI.Arguments
             return entity =>
             {
                 object field = entity.GetValueByName(name);
-                if ((cmp == "<" || cmp == ">") && !IsNumeric(field) && field is not string)
+                if (cmp is "<" or ">" && !IsNumeric(field) && field is not string)
                     throw new ArgumentException($"Field of type {entity.GetValueByName(name).GetType()} cannot be compared using {cmp}!");
 
                 if (IsNumeric(field) || field is string)
@@ -49,7 +45,8 @@ namespace ConsoleProject.CLI.Arguments
                         throw new ArgumentException($"Unable to convert {val} to type {field.GetType()}.", ex);
                     }
 
-                    var comparable = (IComparable) field;
+                    var comparable = (IComparable)field;
+
                     return cmp switch
                     {
                         "<" => comparable.CompareTo(type) < 0,
@@ -61,6 +58,7 @@ namespace ConsoleProject.CLI.Arguments
                 return field.Equals(val);
             };
         }
+
         public static bool IsNumeric(object obj)
         {
             return obj is short or ushort or int or uint or long or ulong or float or double or decimal;

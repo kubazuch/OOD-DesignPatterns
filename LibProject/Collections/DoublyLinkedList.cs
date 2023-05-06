@@ -84,7 +84,7 @@
             tail = null;
         }
 
-        public void Add(T val)
+        public override void Add(T val)
         {
             Node newNode = new Node(val, null, tail);
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace BTM.TextData
 {
@@ -14,7 +13,7 @@ namespace BTM.TextData
         private TextDriver adaptee;
 
         public List<IVehicle> Vehicles => DRIVER.Match(adaptee.TextRepr).Groups["vehicleid"]
-            .Captures.Select(id => TextRepresentation.VEHICLES[int.Parse((string) id.Value)]).ToList();
+            .Captures.Select(id => TextRepresentation.VEHICLES[int.Parse(id.Value)]).ToList();
         public string Name => DRIVER.Match(adaptee.TextRepr).Groups["name"].Value;
         public string Surname => DRIVER.Match(adaptee.TextRepr).Groups["surname"].Value;
         public int Seniority => int.Parse(DRIVER.Match(adaptee.TextRepr).Groups["seniority"].Value);
@@ -23,22 +22,14 @@ namespace BTM.TextData
         {
             this.adaptee = adaptee;
 
-            TextRepresentation.DRIVERS.Add(TextRepresentation.DRIVERS.Count, this);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>
             {
-                case "name":
-                    return Name;
-                case "surname":
-                    return Surname;
-                case "seniority":
-                    return Seniority;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["name"] = () => Name,
+                ["surname"] = () => Surname,
+                ["seniority"] = () => Seniority
+            };
+
+            TextRepresentation.DRIVERS.Add(TextRepresentation.DRIVERS.Count, this);
         }
 
         public override string ToString()
@@ -49,5 +40,6 @@ namespace BTM.TextData
             return builder.ToString();
         }
 
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

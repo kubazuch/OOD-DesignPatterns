@@ -13,6 +13,8 @@ namespace BTM.Data
         public List<IStop> Stops { get; }
         public List<IVehicle> Vehicles { get; }
 
+        public Dictionary<string, Func<object>> Fields { get; }
+
         public Line(string numberHex, int numberDec, string commonName)
         {
             NumberHex = numberHex;
@@ -20,21 +22,13 @@ namespace BTM.Data
             CommonName = commonName;
             Stops = new List<IStop>();
             Vehicles = new List<IVehicle>();
-        }
 
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>()
             {
-                case "numberHex":
-                    return NumberHex;
-                case "numberDec":
-                    return NumberDec;
-                case "commonName":
-                    return CommonName;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["numberHex"] = () => NumberHex,
+                ["numberDec"] = () => NumberDec,
+                ["commonName"] = () => CommonName
+            };
         }
 
         public override string ToString()

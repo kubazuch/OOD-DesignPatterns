@@ -59,22 +59,14 @@ namespace BTM.TupleStackData
         {
             this.adaptee = adaptee;
 
-            TupleStackRepresentation.LINES.Add(NumberDec, this);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>
             {
-                case "numberHex":
-                    return NumberHex;
-                case "numberDec":
-                    return NumberDec;
-                case "commonName":
-                    return CommonName;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
+                ["numberHex"] = () => NumberHex,
+                ["numberDec"] = () => NumberDec,
+                ["commonName"] = () => CommonName
+            };
+
+            TupleStackRepresentation.LINES.Add(NumberDec, this);
         }
 
         public override string ToString()
@@ -85,5 +77,7 @@ namespace BTM.TupleStackData
             builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
             return builder.ToString();
         }
+
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

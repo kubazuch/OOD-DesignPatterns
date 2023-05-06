@@ -46,23 +46,16 @@ namespace BTM.TupleStackData
         {
             this.adaptee = adaptee;
 
+            Fields = new Dictionary<string, Func<object>>
+            {
+                ["id"] = () => Id,
+                ["name"] = () => Name,
+                ["type"] = () => Type
+            };
+
             TupleStackRepresentation.STOPS.Add(Id, this);
         }
 
-        public object GetValueByName(string name)
-        {
-            switch (name)
-            {
-                case "id":
-                    return Id;
-                case "name":
-                    return Name;
-                case "type":
-                    return Type;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
-        }
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -70,5 +63,7 @@ namespace BTM.TupleStackData
             builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
             return builder.ToString();
         }
+
+        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

@@ -10,6 +10,7 @@ namespace BTM.TupleStackData
         private TupleStackTram adaptee;
 
         public override int Id => adaptee.TupleRepr.Item1;
+        public override Dictionary<string, Func<object>> Fields { get; }
 
         public int CarsNumber
         {
@@ -37,23 +38,15 @@ namespace BTM.TupleStackData
         {
             this.adaptee = adaptee;
 
-            TupleStackRepresentation.TRAMS.Add(Id, this);
-            TupleStackRepresentation.VEHICLES.Add(Id, this);
-        }
-
-        public override object GetValueByName(string name)
-        {
-            switch (name)
+            Fields = new Dictionary<string, Func<object>>()
             {
-                case "id":
-                    return Id;
-                case "carsNumber":
-                    return CarsNumber;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
-        }
+                ["id"] = () => Id,
+                ["carsNumber"] = () => CarsNumber
+            };
 
+            TupleStackRepresentation.TRAMS.Add(adaptee.TupleRepr.Item1, this);
+            TupleStackRepresentation.VEHICLES.Add(adaptee.TupleRepr.Item1, this);
+        }
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();

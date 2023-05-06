@@ -7,6 +7,7 @@ namespace BTM.Data
 {
     public class Bytebus : IBytebus
     {
+        public Dictionary<string, Func<object>> Fields { get; }
         public int Id { get; }
         public List<ILine> Lines { get; }
         public string EngineClass { get; }
@@ -16,6 +17,12 @@ namespace BTM.Data
             Id = id;
             Lines = new List<ILine>();
             EngineClass = engineClass;
+
+            Fields = new()
+            {
+                ["id"] = () => Id,
+                ["engineClass"] = () => EngineClass
+            };
 
             foreach (var line in lines)
             {
@@ -27,19 +34,6 @@ namespace BTM.Data
         {
             Lines.Add(line);
             line.Vehicles.Add(this);
-        }
-
-        public object GetValueByName(string name)
-        {
-            switch (name)
-            {
-                case "id":
-                    return Id;
-                case "engineClass":
-                    return EngineClass;
-                default:
-                    throw new ArgumentException($"Unknown field: {name}");
-            }
         }
 
         public override string ToString()

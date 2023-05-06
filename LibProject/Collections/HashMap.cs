@@ -68,7 +68,7 @@ namespace BTM.Collections
             }
         }
 
-        public int Capacity {get;}
+        public int Capacity { get; }
         public T[] Items { get; }
         private readonly bool[] _filled;
 
@@ -79,7 +79,7 @@ namespace BTM.Collections
             _filled = new bool[capacity];
         }
 
-        public void Add(T val)
+        public override void Add(T val)
         {
             int pos = val.GetHashCode() % Capacity;
             if (_filled[pos]) throw new ArgumentException("Hash collision!");
