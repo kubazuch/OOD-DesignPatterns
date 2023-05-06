@@ -76,7 +76,7 @@ namespace BTM.Collections
             count = 0;
         }
 
-        public void Add(T item)
+        public override void Add(T item)
         {
             if (count == items.Length)
             {
