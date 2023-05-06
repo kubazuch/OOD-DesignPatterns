@@ -27,7 +27,7 @@ namespace ConsoleProject
             _commandDispatcher.Register(Command.Named("exit").WithDescription("Closes the application.").Calls(_ => Stop()));
             _commandDispatcher.Register(Command.Named("list")
                 .WithDescription("Prints all objects of a particular type.")
-                .WithUsageDetails("The command prints to the console all of the objects of given class where printing an object\nmeans listing all of its non reference fields.")
+                .WithUsageDetails("The command prints to the console all of the objects of given class where printing an object means listing all of its non reference fields.")
                 .WithArg(new TypeArgument(true))
                 .Calls(args =>
                 {
@@ -36,7 +36,7 @@ namespace ConsoleProject
                 }));
             _commandDispatcher.Register(Command.Named("find")
                 .WithDescription("Prints objects matching certain conditions.")
-                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non\nreference fields. They follow format:\n\n\t<name_of_field>=|<|><value>\n\nwhere “=|<|>” means any strong comparison operator. For numerical fields natural comparison will\nbe used. Strings will use a lexicographic order. For other types only “=” is allowed. If a value\nwere to contain spaces it should be placed inside quotation marks.")
+                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t<name_of_field>=|<|><value>\n\nwhere “=|<|>” means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only \"=\" is allowed. If a value were to contain spaces it should be placed inside quotation marks.")
                 .WithArg(new TypeArgument(true))
                 .WithVararg(new PredicateArgument(true))
                 .Calls(args =>
@@ -55,6 +55,8 @@ namespace ConsoleProject
                 }));
 
             _commandDispatcher.Register(Command.Named("add")
+                .WithDescription("Adds a new object of a particular type.")
+                .WithUsageDetails("where base|secondary defines the representation in which the object should be created. After receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. The program waits for further instructions from the user describing the values of the fields of the object that is supposed to be created with the add command. The format for each line is as follows:\n\n\t<name_of_field>=<value>\n\nA line like that means that the value of the field <name_of_field> for the newly created object will be equal to <value>. The user can enter however many lines they want in such a format (even repeating the fields that they have already defined - in this case the previous value is overridden) describing the object until using one of the following commands:\n\n\tDONE or EXIT\n\nAfter receiving the DONE command the creation process finishes and the program adds a new object described by the user to the collection. After receiving the EXIT command the creation process also finishes but no new object is created and nothing is added to the collection. The data provided by the user is also discarded.")
                 .WithArg(new TypeArgument(true, true))
                 .WithArg(new EnumArgument<AbstractFactory>(new Dictionary<string, AbstractFactory> { ["base"] = new BaseAbstractFactory(), ["secondary"] = new TupleStackAbstractFactory() }, true))
                 .Calls(AddCommandLogic));
