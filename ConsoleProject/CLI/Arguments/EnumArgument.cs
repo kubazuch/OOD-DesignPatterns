@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleProject.CLI.Arguments
 {
@@ -41,7 +38,7 @@ namespace ConsoleProject.CLI.Arguments
 
         public override T Parse(DataManager data, string arg)
         {
-            if(!_dictionary.TryGetValue(arg, out T value))
+            if (!_dictionary.TryGetValue(arg, out T value))
                 throw new ArgumentException($"Invalid value: {arg}. Possible values: {string.Join(", ", _dictionary.Keys)}");
 
             return value;

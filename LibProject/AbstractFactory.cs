@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BTM.Builder;
+using System;
 using System.Collections.Generic;
-using BTM.Builder;
 
 namespace BTM
 {
@@ -12,7 +12,7 @@ namespace BTM
         {
             _creators = new Dictionary<string, Func<AbstractBuilder, IEntity>>
             {
-                ["line"] = builder => CreateLine((LineBuilder) builder),
+                ["line"] = builder => CreateLine((LineBuilder)builder),
                 ["driver"] = builder => CreateDriver((DriverBuilder)builder),
                 ["bytebus"] = builder => CreateBytebus((BytebusBuilder)builder),
                 ["stop"] = builder => CreateStop((StopBuilder)builder),
