@@ -4,6 +4,8 @@ using ConsoleProject.CLI;
 using ConsoleProject.CLI.Arguments;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using BTM.Builder;
 using BTM.Data;
 using BTM.TupleStackData;
 
@@ -52,12 +54,59 @@ namespace ConsoleProject
                     Algorithms.Print(collection, Predicate);
                 }));
 
+            Regex assignment = new(@"^([^=]+)=(?:([^""\s]+)|""([^""]+)"")", RegexOptions.Compiled);
             _commandDispatcher.Register(Command.Named("add")
                 .WithArg(new TypeArgument(true, true))
-                .WithArg(new EnumArgument<AbstractFactory>(new Dictionary<string, AbstractFactory> { ["base"] = new BaseAbstractFactory(), ["secondary"] = new TupleStackAbstractFactory()}, true))
+                .WithArg(new EnumArgument<AbstractFactory>(new Dictionary<string, AbstractFactory> { ["base"] = new BaseAbstractFactory(), ["secondary"] = new TupleStackAbstractFactory() }, true))
                 .Calls(args =>
                 {
+                    string name = (string)args[0];
+                    ICollection collection = (ICollection)args[1];
+                    AbstractFactory factory = (AbstractFactory)args[2];
 
+                    AbstractBuilder builder = AbstractBuilder.GetByType(name);
+
+                    Console.WriteLine($"Adding new {name}.");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"Available fields: {string.Join(", ", builder.Fields)}");
+
+                    do
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("+ ");
+                        Console.ResetColor();
+                        var cmd = Console.ReadLine();
+                        var match = assignment.Match(cmd);
+
+                        if (match.Success)
+                        {
+                            var field = match.Groups[1].Value;
+                            var val = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
+                            Console.WriteLine($"Set {field} to {val}");
+                            builder.Set(field, val);
+                        }
+                        else if (cmd is "DONE")
+                            break;
+                        else if (cmd is "EXIT")
+                        {
+                            Console.WriteLine($"Creation of {name} terminated.");
+                            return;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(
+                                $"Unknown subcommand: {cmd}. Possible subcommands: EXIT, DONE and assigmnents of form: field=value");
+                        }
+                    } while (true);
+
+                    IEntity created = factory.CreateEntity(builder);
+                    collection.Add(created);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Created new {name}: ");
+                    Console.ResetColor();
+                    Console.WriteLine(created);
                 }));
         }
 
