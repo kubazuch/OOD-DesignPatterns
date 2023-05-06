@@ -1,4 +1,7 @@
-﻿namespace BTM.Builder
+﻿using System;
+using System.Collections.Generic;
+
+namespace BTM.Builder
 {
     public class LineBuilder : AbstractBuilder
     {
@@ -6,7 +9,15 @@
         internal int _numberDec;
         internal string _commonName;
 
-        public LineBuilder() { }
+        public LineBuilder() : base("line")
+        {
+            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
+            {
+                ["numberHex"] = SetNumberHex,
+                ["numberDec"] = v => SetNumberDec(int.Parse(v)),
+                ["commonName"] = SetCommonName
+            };
+        }
 
         public LineBuilder SetNumberHex(string numberHex)
         {

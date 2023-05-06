@@ -1,4 +1,7 @@
-﻿namespace BTM.Builder
+﻿using System;
+using System.Collections.Generic;
+
+namespace BTM.Builder
 {
     public class DriverBuilder : AbstractBuilder
     {
@@ -6,7 +9,15 @@
         internal string _surname;
         internal int _seniority;
 
-        public DriverBuilder() { }
+        public DriverBuilder() : base("driver")
+        {
+            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
+            {
+                ["name"] = SetName,
+                ["surname"] = SetSurname,
+                ["seniority"] = v => SetSeniority(int.Parse(v))
+            };
+        }
 
         public DriverBuilder SetName(string name)
         {

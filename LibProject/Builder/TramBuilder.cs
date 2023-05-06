@@ -1,11 +1,21 @@
-﻿namespace BTM.Builder
+﻿using System;
+using System.Collections.Generic;
+
+namespace BTM.Builder
 {
     public class TramBuilder : AbstractBuilder
     {
         internal int _id;
         internal int _carsNumber;
 
-        public TramBuilder() { }
+        public TramBuilder() : base("tram")
+        {
+            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
+            {
+                ["id"] = v => SetId(int.Parse(v)),
+                ["carsNumber"] = v => SetCarsNumber(int.Parse(v))
+            };
+        }
 
         public TramBuilder SetId(int id)
         {

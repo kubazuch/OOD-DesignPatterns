@@ -1,4 +1,7 @@
-﻿namespace BTM.Builder
+﻿using System;
+using System.Collections.Generic;
+
+namespace BTM.Builder
 {
     public class StopBuilder : AbstractBuilder
     {
@@ -6,7 +9,15 @@
         internal string _name;
         internal string _type;
 
-        public StopBuilder() { }
+        public StopBuilder() : base("stop")
+        {
+            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
+            {
+                ["id"] = v => SetId(int.Parse(v)),
+                ["name"] = SetName,
+                ["type"] = SetType
+            };
+        }
 
         public StopBuilder SetId(int id)
         {

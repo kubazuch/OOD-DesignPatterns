@@ -30,10 +30,10 @@ namespace BTM
 
         public abstract ITram CreateTram(TramBuilder builder);
 
-        public IEntity CreateEntity(string name, AbstractBuilder builder)
+        public IEntity CreateEntity(AbstractBuilder builder)
         {
-            if (!_creators.TryGetValue(name, out var value))
-                throw new ArgumentException($"Unknown entity type: {name}. Possible types: {string.Join(", ", _creators.Keys)}");
+            if (!_creators.TryGetValue(builder.Name, out var value))
+                throw new ArgumentException($"Unknown entity type: {builder.Name}. Possible types: {string.Join(", ", _creators.Keys)}");
 
             return value(builder);
         }

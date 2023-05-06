@@ -3,6 +3,9 @@ using BTM.Collections;
 using ConsoleProject.CLI;
 using ConsoleProject.CLI.Arguments;
 using System;
+using System.Collections.Generic;
+using BTM.Data;
+using BTM.TupleStackData;
 
 namespace ConsoleProject
 {
@@ -47,6 +50,14 @@ namespace ConsoleProject
                     }
 
                     Algorithms.Print(collection, Predicate);
+                }));
+
+            _commandDispatcher.Register(Command.Named("add")
+                .WithArg(new TypeArgument(true, true))
+                .WithArg(new EnumArgument<AbstractFactory>(new Dictionary<string, AbstractFactory> { ["base"] = new BaseAbstractFactory(), ["secondary"] = new TupleStackAbstractFactory()}, true))
+                .Calls(args =>
+                {
+
                 }));
         }
 
