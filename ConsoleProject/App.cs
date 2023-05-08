@@ -123,7 +123,18 @@ namespace ConsoleProject
                     var field = match.Groups[1].Value;
                     var val = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
                     Console.WriteLine($"Set {field} to {val}");
-                    builder.Set(field, val);
+                    try
+                    {
+                        builder.Set(field, val);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        if (ex.InnerException != null)
+                            Console.WriteLine($"Caused by: {ex.InnerException.Message}");
+                        Console.ResetColor();
+                    }
                 }
                 else if (cmd is "DONE")
                     break;
