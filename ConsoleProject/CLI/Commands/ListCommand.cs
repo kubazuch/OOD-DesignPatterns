@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using BTM.Collections;
 using ConsoleProject.CLI.Arguments;
 using ConsoleProject.CLI.Exception;
@@ -15,6 +15,8 @@ namespace ConsoleProject.CLI.Commands
         private readonly DataManager _data;
 
         private (string raw, ICollection parsed) _collection;
+
+        public ListCommand() : base("", "") => throw new NotImplementedException();
 
         public ListCommand(DataManager data) 
             : base("list", "Prints objects matching certain conditions")
@@ -56,6 +58,18 @@ namespace ConsoleProject.CLI.Commands
             sb.Append("type=§e").Append(_collection.raw).Append("§r");
 
             return sb.ToString();
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Type");
+            writer.WriteValue(_collection.raw);
+            writer.WriteEndElement();
         }
 
         public override void PrintHelp(List<string>? o)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace ConsoleProject.CLI.Arguments
 {
@@ -24,7 +24,7 @@ namespace ConsoleProject.CLI.Arguments
             return arg;
         }
 
-        public override string ToString() => string.Join('|', _keys);
+        public override string ToString() => new StringBuilder().Append(Required ? '<' : '[').Append(string.Join('|', _keys)).Append(Required ? '>' : ']').ToString();
     }
 
     public class EnumArgument<T> : CommandArgument<T>
@@ -45,7 +45,7 @@ namespace ConsoleProject.CLI.Arguments
 
             return value;
         }
-
-        public override string ToString() => string.Join('|', _dictionary.Keys);
+        
+        public override string ToString() => new StringBuilder().Append(Required ? '<' : '[').Append(string.Join('|', _dictionary.Keys)).Append(Required ? '>' : ']').ToString();
     }
 }

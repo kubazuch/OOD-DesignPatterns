@@ -1,5 +1,4 @@
-﻿using System;
-using BTM.Builder;
+﻿using BTM.Builder;
 
 namespace BTM.BaseData
 {

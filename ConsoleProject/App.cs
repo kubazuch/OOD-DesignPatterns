@@ -1,12 +1,5 @@
-﻿using BTM;
-using BTM.Builder;
-using BTM.Collections;
-using BTM.TupleStackData;
-using ConsoleProject.CLI;
-using ConsoleProject.CLI.Arguments;
+﻿using ConsoleProject.CLI;
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using ConsoleProject.CLI.Commands;
 
 namespace ConsoleProject
@@ -16,7 +9,7 @@ namespace ConsoleProject
         public static readonly App Instance = new(DataRepresentation.Base);
         private bool _isRunning;
 
-        private readonly CommandDispatcher _commandDispatcher;
+        public readonly CommandDispatcher _commandDispatcher;
 
         private App(DataRepresentation representation)
         {

@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using BTM;
-using BTM.BaseData;
 using BTM.Builder;
 using BTM.Collections;
 using BTM.Refraction;
-using BTM.TupleStackData;
 using ConsoleProject.CLI.Arguments;
 using ConsoleProject.CLI.Exception;
 
@@ -26,6 +25,8 @@ namespace ConsoleProject.CLI.Commands
         private (string raw, ICollection parsed) _collection;
         private (List<string> raw, Predicate<object> parsed) _predicate;
         private AbstractBuilder? _builder;
+
+        public EditCommand() : base("", "") => throw new NotImplementedException();
 
         public EditCommand(DataManager data)
             : base("edit", "Edits values of a given record")
@@ -149,6 +150,33 @@ namespace ConsoleProject.CLI.Commands
             sb.Append(_builder.ToString(true));
 
             return sb.ToString();
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Type");
+            writer.WriteValue(_collection.raw);
+            writer.WriteEndElement();
+
+            foreach (var predicate in _predicate.raw)
+            {
+                writer.WriteStartElement("Predicate");
+                writer.WriteValue(predicate);
+                writer.WriteEndElement();
+            }
+
+            foreach (var field in _builder.Fields)
+            {
+                if (field.Value.Value == null) continue;
+                writer.WriteStartElement(char.ToUpper(field.Key[0]) + field.Key[1..]);
+                writer.WriteValue(field.Value.Value);
+                writer.WriteEndElement();
+            }
         }
 
         public override object Clone() => new EditCommand(this);

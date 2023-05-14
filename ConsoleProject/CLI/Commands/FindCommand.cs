@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using BTM;
 using BTM.Collections;
 using ConsoleProject.CLI.Arguments;
@@ -17,7 +18,9 @@ namespace ConsoleProject.CLI.Commands
         private readonly DataManager _data;
 
         private (string raw, ICollection parsed) _collection;
-        private (string raw, Predicate<object> parsed) _predicate;
+        private (List<string> raw, Predicate<object> parsed) _predicate;
+
+        public FindCommand() : base("", "") => throw new NotImplementedException();
 
         public FindCommand(DataManager data)
             : base("find", "Prints objects matching certain conditions")
@@ -50,7 +53,7 @@ namespace ConsoleProject.CLI.Commands
                 predicates.Add(PredicateArg.Parse(context[0], context[i]));
             }
 
-            _predicate = ("§e" + string.Join("§r and §e", context.Skip(1)) + "§r", entity => predicates.All(predicate => predicate((Entity)entity)));
+            _predicate = (context.Skip(1).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
 
             Line = line;
             Cloned = true;
@@ -63,9 +66,28 @@ namespace ConsoleProject.CLI.Commands
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
             sb.Append("type=§e").AppendLine(_collection.raw);
-            sb.Append("§rpredicate=").Append(_predicate.raw);
+            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw.Skip(1))).Append("§r");
 
             return sb.ToString();
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Type");
+            writer.WriteValue(_collection.raw);
+            writer.WriteEndElement();
+
+            foreach (var predicate in _predicate.raw)
+            {
+                writer.WriteStartElement("Predicate");
+                writer.WriteValue(predicate);
+                writer.WriteEndElement();
+            }
         }
 
         public override object Clone() => new FindCommand(this);
