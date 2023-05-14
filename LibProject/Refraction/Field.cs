@@ -8,9 +8,7 @@ namespace BTM.Refraction
 
         Type FieldType { get; }
 
-        object? GetValue();
-        
-        void SetValue(object? value);
+        object? Value { get; set; }
 
     }
 
@@ -23,6 +21,15 @@ namespace BTM.Refraction
 
         public Type FieldType => typeof(T);
 
+        object? IField.Value
+        {
+            get => Value;
+            set {
+                Type t = Nullable.GetUnderlyingType(FieldType) ?? FieldType;
+                Value = (T) (value == null ? null : Convert.ChangeType(value, t));
+            }
+        }
+
         public T Value
         {
             get => (_getter ?? throw new InvalidOperationException())();
@@ -32,14 +39,6 @@ namespace BTM.Refraction
         public Field(string name)
         {
             Name = name;
-        }
-
-        public object? GetValue() => Value;
-
-        public void SetValue(object? value)
-        {
-            Type t = Nullable.GetUnderlyingType(FieldType) ?? FieldType;
-            Value = (T) (value == null ? null : Convert.ChangeType(value, t));
         }
 
         public void SetSetter(Action<T> setter) => _setter = setter;

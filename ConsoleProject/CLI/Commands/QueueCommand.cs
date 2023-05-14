@@ -13,7 +13,7 @@ namespace ConsoleProject.CLI.Commands
 {
     public class QueueCommand : Command
     {
-        private static readonly EnumArgument FactoryArg = new(new List<string> { "print", "export", "commit" }, "subcommand", true);
+        private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "export", "commit" }, "subcommand", true);
 
         private readonly CommandDispatcher _dispatcher;
 
@@ -21,15 +21,15 @@ namespace ConsoleProject.CLI.Commands
             : base("queue", "Command queue commands")
         {
             _dispatcher = dispatcher;
-            Line = $"queue {FactoryArg} ...";
+            Line = $"queue {SubcommandArg} ...";
         }
 
         public override void Process(string line, List<string> context)
         {
             if (context.Count == 0)
-                throw new MissingArgumentException(this, 1, FactoryArg.Name);
+                throw new MissingArgumentException(this, 1, SubcommandArg.Name);
 
-            switch (FactoryArg.Parse(context[0]))
+            switch (SubcommandArg.Parse(context[0]))
             {
                 case "print":
                     ProcessPrint(context);
@@ -68,7 +68,20 @@ namespace ConsoleProject.CLI.Commands
 
             while (_dispatcher.CommandQueue.TryDequeue(out QueueableCommand cmd))
             {
-                cmd.Execute();
+                try
+                {
+                    cmd.Execute();
+                }
+                catch (ArgumentException ex)
+                {
+                    using ((TemporaryConsoleColor)ConsoleColor.DarkRed)
+                    {
+                        Log.WriteLine(ex.Message);
+                        if (ex.InnerException != null)
+                            Log.WriteLine($"Caused by: {ex.InnerException.Message}");
+                    }
+                }
+
                 Log.WriteLine();
             }
         }
@@ -109,6 +122,8 @@ namespace ConsoleProject.CLI.Commands
                     Log.WriteLine($"\t§l{ToString()}");
                     Log.WriteLine("\nExecutes all commands stored in the queue in order of their addition. After that queue is empty.");
                     break;
+                default:
+                    throw new ArgumentException($"Unknown subcommand: `§l{o[0]}§r. Possible subcommands: §lprint, export, commit");
             }
         }
     }

@@ -42,7 +42,7 @@ namespace ConsoleProject.CLI.Commands
                 throw new TooManyArgumentsException(this);
 
             Line = line;
-            IsCloned = true;
+            Cloned = true;
         }
 
         public override void Execute() => Algorithms.ForEach(_collection.parsed.GetForwardIterator(), Console.WriteLine);

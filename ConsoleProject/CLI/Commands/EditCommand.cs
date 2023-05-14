@@ -1,5 +1,7 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using BTM;
@@ -13,29 +15,29 @@ using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {
-    public class AddCommand : QueueableCommand
+    public class EditCommand : QueueableCommand
     {
         private static readonly TypeArgument TypeArg = new(true);
-        private static readonly EnumArgument<AbstractFactory> FactoryArg = new(new Dictionary<string, AbstractFactory> { ["base"] = new BaseAbstractFactory(), ["secondary"] = new TupleStackAbstractFactory() }, "representation", true);
+        private static readonly PredicateArgument PredicateArg = new(true);
         public static readonly Regex Assignment = new(@"^([^=]+?)\s*?=\s*?(?:([^""\s]+)|""([^""]+)"")", RegexOptions.Compiled);
 
         private readonly DataManager _data;
 
         private (string raw, ICollection parsed) _collection;
-        private (string raw, AbstractFactory parsed) _factory;
+        private (List<string> raw, Predicate<object> parsed) _predicate;
         private AbstractBuilder? _builder;
 
-        public AddCommand(DataManager data)
-            : base("add", "Adds a new object of a particular type")
+        public EditCommand(DataManager data)
+            : base("edit", "Edits values of a given record")
         {
             _data = data;
 
             var sb = new StringBuilder();
-            sb.Append(Name).Append(' ').Append(TypeArg).Append(' ').Append(FactoryArg);
+            sb.Append(Name).Append(' ').Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
             Line = sb.ToString();
         }
 
-        private AddCommand(AddCommand other)
+        private EditCommand(EditCommand other)
             : base(other.Name, other.Description)
         {
             _data = other._data;
@@ -49,18 +51,17 @@ namespace ConsoleProject.CLI.Commands
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
 
             _collection = (context[0], TypeArg.Parse(_data, context[0]));
+            _builder = AbstractBuilder.GetByType(_collection.raw, false);
 
-            if (context.Count == 1)
-                throw new MissingArgumentException(this, 2, FactoryArg.Name);
+            List<Predicate<Entity>> predicates = new List<Predicate<Entity>>();
+            for (int i = 1; i < context.Count; ++i)
+            {
+                predicates.Add(PredicateArg.Parse(context[0], context[i]));
+            }
 
-            _factory = (context[1], FactoryArg.Parse(context[1]));
+            _predicate = (context.Skip(1).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
 
-            if (context.Count > 2)
-                throw new TooManyArgumentsException(this);
-            
-            _builder = AbstractBuilder.GetByType(_collection.raw);
-
-            Log.WriteLine($"Creating new §l{_collection.raw}§r");
+            Log.WriteLine($"Editing §l{_collection.raw}§r");
             Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
 
             do
@@ -78,7 +79,7 @@ namespace ConsoleProject.CLI.Commands
 
                     try
                     {
-                        ((IRefractive) _builder).SetValueByName(field, val);
+                        ((IRefractive)_builder).SetValueByName(field, val);
                     }
                     catch (ArgumentException ex)
                     {
@@ -94,11 +95,11 @@ namespace ConsoleProject.CLI.Commands
                     break;
                 else if (cmd is "EXIT")
                 {
-                    Log.WriteLine($"§eCreation of {_collection.raw} terminated.");
+                    Log.WriteLine($"§eEdition of {_collection.raw} terminated.");
                     return;
                 }
                 else
-                { 
+                {
                     Log.WriteLine($"§4Unknown subcommand: `§l{cmd}§4`. Possible subcommands: §cEXIT, DONE and assigmnents of form: field=value");
                 }
             } while (true);
@@ -114,23 +115,43 @@ namespace ConsoleProject.CLI.Commands
 
         public override void Execute()
         {
-            Entity created = _factory.parsed.CreateEntity(_builder!);
-            _collection.parsed.Add(created);
-            Log.WriteLine($"§aCreated new §l{_collection.raw}§a:");
-            Log.WriteLine(created.ToString());
-        }
+            Entity? entity = null;
+            int count = 0;
+            var iterator = _collection.parsed.GetForwardIterator();
+            while (iterator.MoveNext())
+            {
+                if (!_predicate.parsed(iterator.Current)) continue;
+                count++;
+                entity ??= (Entity) iterator.Current;
+            }
+            
+            if (count != 1)
+                throw new ArgumentException($"Predicate `§l{string.Join("§r and §l", _predicate.raw.Skip(1))}§r` should specify one record uniquely, found: §l{count}");
 
-        public override object Clone() => new AddCommand(this);
+            foreach (var kvp in _builder.Fields)
+            {
+                var field = kvp.Value;
+                if(field.Value == null) continue;
+
+                ((IRefractive) entity!).SetValueByName(field.Name, field.Value);
+            }
+
+            Log.WriteLine($"§aEdited §l{_collection.raw}§a:");
+            Log.WriteLine(entity.ToString());
+        }
 
         public override string ToHumanReadableString()
         {
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
-            sb.Append("type=§e").Append(_collection.raw).AppendLine("§r");
+            sb.Append("type=§e").AppendLine(_collection.raw);
+            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw.Skip(1))).Append("§r");
             sb.Append(_builder.ToString(true));
 
             return sb.ToString();
         }
+
+        public override object Clone() => new EditCommand(this);
 
         public override void PrintHelp(List<string>? o)
         {
@@ -139,18 +160,20 @@ namespace ConsoleProject.CLI.Commands
 
             Log.WriteLine("\nUsage:");
             Log.WriteLine($"\t§l{ToString()}");
-            Log.WriteLine(
-                "\nwhere `§lbase|secondary§r` defines the §lrepresentation§r in which the object should be created. " +
-                "After receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. " +
-                "The program waits for further instructions from the user describing the values of the fields of the object that is supposed to be created with the §ladd§r command. " +
-                "The format for each line is as follows:");
+            Log.WriteLine($"\nwhere requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:");
+            Log.WriteLine("\n\t§l<name_of_field>=|<|><value>");
+            Log.WriteLine("\nwhere `§l=|<|>§r` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `§l=§r` is allowed. If a value were to contain spaces it should be placed inside quotation marks.");
+            Log.WriteLine("\nThis command allows editing a given record if requirement conditions specify §lone record uniquely§r.");
+            Log.WriteLine("\nAfter receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. " +
+                          "The program waits for further instructions from the user describing the values of the fields of the object that is supposed to be edited with the §ledit§r command. " +
+                          "The format for each line is as follows:");
             Log.WriteLine("\n\t§l<name_of_field>=<value>");
             Log.WriteLine(
-                "\nA line like that means that the value of the field `§lname_of_field§r` for the newly created object will be equal to `§lvalue§r`. " +
+                "\nA line like that means that the value of the field `§lname_of_field§r` for the edited object will be equal to `§lvalue§r`. " +
                 "The user can enter however many lines they want in such a format (even repeating the fields that they have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:");
             Log.WriteLine("\n\t§lDONE§r or §lEXIT");
-            Log.WriteLine("\nAfter receiving the §lDONE§r command the creation process finishes and the program adds a new object described by the user to the collection. " +
-                          "After receiving the §lEXIT§r command the creation process also finishes but no new object is created and nothing is added to the collection. " +
+            Log.WriteLine("\nAfter receiving the §lDONE§r command the edition process finishes and the program schedules the edit into the queue. " +
+                          "After receiving the §lEXIT§r command the edition process also finishes but no edits are done. " +
                           "The data provided by the user is also discarded.");
         }
     }

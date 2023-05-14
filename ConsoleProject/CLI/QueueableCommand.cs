@@ -8,7 +8,7 @@ namespace ConsoleProject.CLI
 {
     public abstract class QueueableCommand : Command, ICloneable
     {
-        protected bool IsCloned = false;
+        protected bool Cloned = false;
 
         protected QueueableCommand(string name, string description) 
             : base(name, description)
@@ -16,6 +16,8 @@ namespace ConsoleProject.CLI
         }
 
         public abstract object Clone();
+
+        public bool IsCloned() => Cloned;
 
         public abstract void Execute();
 

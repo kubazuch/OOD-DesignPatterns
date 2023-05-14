@@ -13,7 +13,7 @@ namespace ConsoleProject
 {
     internal class App
     {
-        public static readonly App Instance = new(DataRepresentation.TupleStack);
+        public static readonly App Instance = new(DataRepresentation.Base);
         private bool _isRunning;
 
         private readonly CommandDispatcher _commandDispatcher;
@@ -27,6 +27,7 @@ namespace ConsoleProject
             _commandDispatcher.Register(new FindCommand(manager));
             _commandDispatcher.Register(new AddCommand(manager));
             _commandDispatcher.Register(new QueueCommand(_commandDispatcher));
+            _commandDispatcher.Register(new EditCommand(manager));
         }
 
         public void Start()

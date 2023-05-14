@@ -53,7 +53,7 @@ namespace ConsoleProject.CLI.Commands
             _predicate = ("§e" + string.Join("§r and §e", context.Skip(1)) + "§r", entity => predicates.All(predicate => predicate((Entity)entity)));
 
             Line = line;
-            IsCloned = true;
+            Cloned = true;
         }
 
         public override void Execute() => Algorithms.Print(_collection.parsed, _predicate.parsed);

@@ -17,7 +17,7 @@ namespace BTM.Refraction
             if (!Fields.ContainsKey(name))
                 throw new ArgumentException($"Unknown field: {name}. Possible names: {string.Join(", ", Fields.Keys)}");
 
-            return Fields[name].GetValue();
+            return Fields[name].Value;
         }
 
         void SetValueByName(string name, object? value)
@@ -25,7 +25,7 @@ namespace BTM.Refraction
             if (!Fields.ContainsKey(name))
                 throw new ArgumentException($"Unknown field: {name}. Possible names: {string.Join(", ", Fields.Keys)}");
 
-            Fields[name].SetValue(value);
+            Fields[name].Value = value;
         }
     }
 }

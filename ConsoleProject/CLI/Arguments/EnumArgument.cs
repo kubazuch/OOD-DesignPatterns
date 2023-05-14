@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ConsoleProject.CLI.Arguments
@@ -19,7 +20,7 @@ namespace ConsoleProject.CLI.Arguments
         {
             if (!_keys.Contains(arg))
                 throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _keys)}");
-
+            
             return arg;
         }
 

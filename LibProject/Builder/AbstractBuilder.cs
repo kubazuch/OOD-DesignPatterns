@@ -44,7 +44,8 @@ namespace BTM.Builder
             var sb = new StringBuilder();
             foreach (var field in Fields)
             {
-                sb.Append(field.Key).Append(color ? "=§e\"" : "=\"").Append(field.Value.GetValue()).AppendLine(color ? "\"§r" : "\"");
+                if(field.Value.Value == null) continue;
+                sb.Append(field.Key).Append(color ? "=§e\"" : "=\"").Append(field.Value.Value).AppendLine(color ? "\"§r" : "\"");
             }
             return sb.ToString().TrimEnd();
         }

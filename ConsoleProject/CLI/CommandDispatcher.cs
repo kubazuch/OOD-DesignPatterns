@@ -26,7 +26,7 @@ namespace ConsoleProject.CLI
         public void Register(Command command)
         {
             if (_registry.ContainsKey(command.Name))
-                throw new DuplicateNameException($"Command with name {command.Name} is already registered!");
+                throw new DuplicateNameException($"Command with name `§l{command.Name}§r` is already registered!");
             _registry[command.Name] = command;
         }
 
@@ -69,14 +69,16 @@ namespace ConsoleProject.CLI
 
             if (!_registry.TryGetValue(result[0], out var cmd))
             {
-                throw new ArgumentException($"Unknown command: {result[0]}. Type \"help\" for help");
+                throw new ArgumentException($"Unknown command: `§l{result[0]}§r`. Type `§lhelp§r` for help");
             }
 
             if (cmd is QueueableCommand queueableCmd)
             {
                 var copy = (QueueableCommand) queueableCmd.Clone();
                 copy.Process(line, result.Skip(1).ToList());
-                CommandQueue.Enqueue(copy);
+                
+                if(copy.IsCloned())
+                    CommandQueue.Enqueue(copy);
             }
             else
             {
