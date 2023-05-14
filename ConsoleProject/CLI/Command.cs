@@ -21,7 +21,9 @@ namespace ConsoleProject.CLI
 
         public abstract void Process(string line, List<string> context);
 
-        public abstract override string ToString();
+        public override string ToString() => Line;
+
+        public virtual string ToHumanReadableString() => ToString();
 
         public virtual void PrintHelp(List<string>? o = null)
         {

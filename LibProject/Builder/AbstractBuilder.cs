@@ -37,12 +37,14 @@ namespace BTM.Builder
             return value(init);
         }
 
-        public override string ToString()
+        public override string ToString() => ToString(false);
+
+        public string ToString(bool color)
         {
             var sb = new StringBuilder();
             foreach (var field in Fields)
             {
-                sb.Append(field.Key).Append("=\"").Append(field.Value.GetValue()).AppendLine("\"");
+                sb.Append(field.Key).Append(color ? "=§e\"" : "=\"").Append(field.Value.GetValue()).AppendLine(color ? "\"§r" : "\"");
             }
             return sb.ToString().TrimEnd();
         }

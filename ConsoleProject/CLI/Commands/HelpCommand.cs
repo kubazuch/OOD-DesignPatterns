@@ -9,9 +9,10 @@ namespace ConsoleProject.CLI.Commands
         private readonly Dictionary<string, Command> _registry;
 
         public HelpCommand(Dictionary<string, Command> commandRegistry)
-            : base("help", "Prints help information for commands.")
+            : base("help", "Prints help information for commands")
         {
             _registry = commandRegistry;
+            Line = "help [command]";
         }
 
         public override void Process(string line, List<string> context)
@@ -29,8 +30,6 @@ namespace ConsoleProject.CLI.Commands
 
             cmd.PrintHelp(context.Skip(1).ToList());
         }
-
-        public override string ToString() => "help [command]";
 
         public override void PrintHelp(List<string>? o)
         {

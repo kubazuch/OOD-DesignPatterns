@@ -12,7 +12,7 @@ namespace ConsoleProject.CLI
     {
         private readonly Dictionary<string, Command> _registry;
 
-        private readonly Queue<QueueableCommand> _commandQueue = new();
+        internal readonly Queue<QueueableCommand> CommandQueue = new();
 
         public CommandDispatcher()
         {
@@ -67,16 +67,6 @@ namespace ConsoleProject.CLI
 
             result = result.Select(s => s.Replace("\\\"", "\"")).ToList();
 
-            if (result[0] == "a")
-            {
-                while (_commandQueue.TryDequeue(out QueueableCommand command1))
-                {
-                    command1.Execute();
-                }
-
-                return;
-            }
-
             if (!_registry.TryGetValue(result[0], out var cmd))
             {
                 throw new ArgumentException($"Unknown command: {result[0]}. Type \"help\" for help");
@@ -86,7 +76,7 @@ namespace ConsoleProject.CLI
             {
                 var copy = (QueueableCommand) queueableCmd.Clone();
                 copy.Process(line, result.Skip(1).ToList());
-                _commandQueue.Enqueue(copy);
+                CommandQueue.Enqueue(copy);
             }
             else
             {

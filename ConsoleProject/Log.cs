@@ -34,7 +34,7 @@ namespace ConsoleProject
             Console.ForegroundColor = old;
         }
 
-        public static void WriteLine(string s)
+        public static void WriteLine(string s = "")
         {
             Write(s + "\n");
         }

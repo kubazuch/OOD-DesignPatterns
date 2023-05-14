@@ -19,6 +19,8 @@ namespace ConsoleProject.CLI
 
         public abstract void Execute();
 
+        public abstract override string ToHumanReadableString();
+
         public override string ToString() => Line;
     }
 }

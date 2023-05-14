@@ -26,6 +26,7 @@ namespace ConsoleProject
             _commandDispatcher.Register(new ListCommand(manager));
             _commandDispatcher.Register(new FindCommand(manager));
             _commandDispatcher.Register(new AddCommand(manager));
+            _commandDispatcher.Register(new QueueCommand(_commandDispatcher));
         }
 
         public void Start()

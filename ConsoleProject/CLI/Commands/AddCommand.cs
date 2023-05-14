@@ -26,15 +26,21 @@ namespace ConsoleProject.CLI.Commands
         private AbstractBuilder? _builder;
 
         public AddCommand(DataManager data)
-            : base("add", "Adds a new object of a particular type.")
+            : base("add", "Adds a new object of a particular type")
         {
             _data = data;
+
+            var sb = new StringBuilder();
+            sb.Append(Name).Append(' ').Append(TypeArg).Append(' ').Append(FactoryArg);
+            Line = sb.ToString();
         }
 
         private AddCommand(AddCommand other)
             : base(other.Name, other.Description)
         {
             _data = other._data;
+
+            Line = other.Line;
         }
 
         public override void Process(string line, List<string> context)
@@ -63,7 +69,9 @@ namespace ConsoleProject.CLI.Commands
                 var cmd = Console.ReadLine().Trim();
                 var match = Assignment.Match(cmd);
 
-                if (match.Success)
+                if (cmd == "")
+                    continue;
+                else if (match.Success)
                 {
                     var field = match.Groups[1].Value;
                     var val = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
@@ -95,7 +103,11 @@ namespace ConsoleProject.CLI.Commands
                 }
             } while (true);
 
-            Line = line;
+            var sb = new StringBuilder();
+            sb.AppendLine(line);
+            sb.Append(_builder).AppendLine();
+            sb.Append("DONE");
+            Line = sb.ToString();
             IsCloned = true;
         }
 
@@ -103,28 +115,21 @@ namespace ConsoleProject.CLI.Commands
         {
             Entity created = _factory.parsed.CreateEntity(_builder!);
             _collection.parsed.Add(created);
-            Log.WriteLine($"§4Created new {_collection.raw}:");
+            Log.WriteLine($"§aCreated new §l{_collection.raw}§a:");
             Log.WriteLine(created.ToString());
         }
 
-        public override string ToString()
+        public override object Clone() => new AddCommand(this);
+
+        public override string ToHumanReadableString()
         {
             var sb = new StringBuilder();
-            if (IsCloned)
-            {
-                sb.AppendLine(base.ToString());
-                sb.Append(_builder).AppendLine();
-                sb.Append("DONE");
-            }
-            else
-            {
-                sb.Append(Name).Append(' ').Append(TypeArg).Append(' ').Append(FactoryArg);
-            }
+            sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
+            sb.Append("type=§e").Append(_collection.raw).AppendLine("§r");
+            sb.Append(_builder.ToString(true));
 
             return sb.ToString();
         }
-
-        public override object Clone() => new AddCommand(this);
 
         public override void PrintHelp(List<string>? o)
         {

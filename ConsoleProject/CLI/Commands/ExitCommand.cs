@@ -11,9 +11,10 @@ namespace ConsoleProject.CLI.Commands
     {
         private readonly App _app;
         public ExitCommand(App app) 
-            : base("exit", "Closes the application.")
+            : base("exit", "Closes the application")
         {
             _app = app;
+            Line = "exit";
         }
 
         public override void Process(string line, List<string> context)
@@ -23,8 +24,6 @@ namespace ConsoleProject.CLI.Commands
 
             _app.Stop();
         }
-
-        public override string ToString() => "exit";
 
         public override void PrintHelp(List<string>? o)
         {

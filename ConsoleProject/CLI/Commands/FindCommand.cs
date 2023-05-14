@@ -20,15 +20,21 @@ namespace ConsoleProject.CLI.Commands
         private (string raw, Predicate<object> parsed) _predicate;
 
         public FindCommand(DataManager data)
-            : base("find", "Prints objects matching certain conditions.")
+            : base("find", "Prints objects matching certain conditions")
         {
             _data = data;
+
+            var sb = new StringBuilder();
+            sb.Append(Name).Append(' ').Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
+            Line = sb.ToString();
         }
 
         private FindCommand(FindCommand other)
             : base(other.Name, other.Description)
         {
             _data = other._data;
+
+            Line = other.Line;
         }
 
         public override void Process(string line, List<string> context)
@@ -44,7 +50,7 @@ namespace ConsoleProject.CLI.Commands
                 predicates.Add(PredicateArg.Parse(context[0], context[i]));
             }
 
-            _predicate = (string.Join(' ', context.Skip(1)), entity => predicates.All(predicate => predicate((Entity)entity)));
+            _predicate = ("§e" + string.Join("§r and §e", context.Skip(1)) + "§r", entity => predicates.All(predicate => predicate((Entity)entity)));
 
             Line = line;
             IsCloned = true;
@@ -52,15 +58,13 @@ namespace ConsoleProject.CLI.Commands
 
         public override void Execute() => Algorithms.Print(_collection.parsed, _predicate.parsed);
 
-        public override string ToString()
+        public override string ToHumanReadableString()
         {
-            if (IsCloned)
-            {
-                return base.ToString();
-            }
-
             var sb = new StringBuilder();
-            sb.Append(Name).Append(' ').Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
+            sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
+            sb.Append("type=§e").AppendLine(_collection.raw);
+            sb.Append("§rpredicate=").Append(_predicate.raw);
+
             return sb.ToString();
         }
 

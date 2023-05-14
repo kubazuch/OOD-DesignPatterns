@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleProject.CLI.Arguments
 {
     public class EnumArgument : CommandArgument<string>
     {
-        private readonly HashSet<string> _keys;
+        private readonly List<string> _keys;
 
-        public EnumArgument(HashSet<string> arguments, string name = null, bool required = false)
+        public EnumArgument(IEnumerable<string> arguments, string name = null, bool required = false)
         {
-            this._keys = arguments;
+            this._keys = arguments.ToList();
             this.Required = required;
             this.Name = name;
         }
