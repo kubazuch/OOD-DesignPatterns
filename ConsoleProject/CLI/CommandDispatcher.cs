@@ -12,6 +12,8 @@ namespace ConsoleProject.CLI
     {
         private readonly Dictionary<string, Command> _registry;
 
+        private readonly Queue<QueueableCommand> _commandQueue = new();
+
         public CommandDispatcher()
         {
             _registry = new Dictionary<string, Command>();
@@ -65,6 +67,16 @@ namespace ConsoleProject.CLI
 
             result = result.Select(s => s.Replace("\\\"", "\"")).ToList();
 
+            if (result[0] == "a")
+            {
+                while (_commandQueue.TryDequeue(out QueueableCommand command1))
+                {
+                    command1.Execute();
+                }
+
+                return;
+            }
+
             if (!_registry.TryGetValue(result[0], out var cmd))
             {
                 throw new ArgumentException($"Unknown command: {result[0]}. Type \"help\" for help");
@@ -73,13 +85,12 @@ namespace ConsoleProject.CLI
             if (cmd is QueueableCommand queueableCmd)
             {
                 var copy = (QueueableCommand) queueableCmd.Clone();
-                copy.Process(result.Skip(1).ToList());
-                Console.WriteLine(copy);
-                //copy.Execute();
+                copy.Process(line, result.Skip(1).ToList());
+                _commandQueue.Enqueue(copy);
             }
             else
             {
-                cmd.Process(result.Skip(1).ToList());
+                cmd.Process(line, result.Skip(1).ToList());
             }
         }
     }

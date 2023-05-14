@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace ConsoleProject.CLI
 {
@@ -10,6 +11,7 @@ namespace ConsoleProject.CLI
     {
         public string Name { get; }
         public string Description { get; }
+        public string Line { get; protected set; }
 
         protected Command(string name, string description)
         {
@@ -17,7 +19,7 @@ namespace ConsoleProject.CLI
             Description = description;
         }
 
-        public abstract void Process(List<string> context);
+        public abstract void Process(string line, List<string> context);
 
         public abstract override string ToString();
 

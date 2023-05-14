@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using BTM;
@@ -39,7 +37,7 @@ namespace ConsoleProject.CLI.Commands
             _data = other._data;
         }
 
-        public override void Process(List<string> context)
+        public override void Process(string line, List<string> context)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -97,24 +95,30 @@ namespace ConsoleProject.CLI.Commands
                 }
             } while (true);
 
+            Line = line;
             IsCloned = true;
         }
 
-        public override void Execute() => Console.WriteLine(":)");
+        public override void Execute()
+        {
+            Entity created = _factory.parsed.CreateEntity(_builder!);
+            _collection.parsed.Add(created);
+            Log.WriteLine($"§4Created new {_collection.raw}:");
+            Log.WriteLine(created.ToString());
+        }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append(Name).Append(' ');
             if (IsCloned)
             {
-                sb.Append(_collection.raw).Append(' ').AppendLine(_factory.raw);
+                sb.AppendLine(base.ToString());
                 sb.Append(_builder).AppendLine();
                 sb.Append("DONE");
             }
             else
             {
-                sb.Append(TypeArg).Append(" ").Append(FactoryArg);
+                sb.Append(Name).Append(' ').Append(TypeArg).Append(' ').Append(FactoryArg);
             }
 
             return sb.ToString();
@@ -129,9 +133,19 @@ namespace ConsoleProject.CLI.Commands
 
             Log.WriteLine("\nUsage:");
             Log.WriteLine($"\t§l{ToString()}");
-            Log.WriteLine($"\nwhere requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:");
-            Log.WriteLine("\n\t§l<name_of_field>=|<|><value>");
-            Log.WriteLine("\nwhere `§l=|<|>§r` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `§l=§r` is allowed. If a value were to contain spaces it should be placed inside quotation marks.");
+            Log.WriteLine(
+                "\nwhere `§lbase|secondary§r` defines the §lrepresentation§r in which the object should be created. " +
+                "After receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. " +
+                "The program waits for further instructions from the user describing the values of the fields of the object that is supposed to be created with the add command. " +
+                "The format for each line is as follows:");
+            Log.WriteLine("\n\t§l<name_of_field>=<value>");
+            Log.WriteLine(
+                "\nA line like that means that the value of the field `§lname_of_field§r` for the newly created object will be equal to `§lvalue§r`. " +
+                "The user can enter however many lines they want in such a format (even repeating the fields that they have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:");
+            Log.WriteLine("\n\t§lDONE§r or §lEXIT");
+            Log.WriteLine("\nAfter receiving the §lDONE§r command the creation process finishes and the program adds a new object described by the user to the collection. " +
+                          "After receiving the §lEXIT§r command the creation process also finishes but no new object is created and nothing is added to the collection. " +
+                          "The data provided by the user is also discarded.");
         }
     }
 }

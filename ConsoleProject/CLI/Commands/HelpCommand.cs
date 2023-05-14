@@ -14,7 +14,7 @@ namespace ConsoleProject.CLI.Commands
             _registry = commandRegistry;
         }
 
-        public override void Process(List<string> context)
+        public override void Process(string line, List<string> context)
         {
             if (context.Count == 0)
             {

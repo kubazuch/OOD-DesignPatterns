@@ -16,7 +16,7 @@ namespace ConsoleProject.CLI.Commands
             _app = app;
         }
 
-        public override void Process(List<string> context)
+        public override void Process(string line, List<string> context)
         {
             if (context.Count > 0)
                 throw new TooManyArgumentsException(this);

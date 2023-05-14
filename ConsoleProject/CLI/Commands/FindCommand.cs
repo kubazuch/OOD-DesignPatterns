@@ -31,7 +31,7 @@ namespace ConsoleProject.CLI.Commands
             _data = other._data;
         }
 
-        public override void Process(List<string> context)
+        public override void Process(string line, List<string> context)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -46,6 +46,7 @@ namespace ConsoleProject.CLI.Commands
 
             _predicate = (string.Join(' ', context.Skip(1)), entity => predicates.All(predicate => predicate((Entity)entity)));
 
+            Line = line;
             IsCloned = true;
         }
 
@@ -53,17 +54,13 @@ namespace ConsoleProject.CLI.Commands
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            sb.Append(Name).Append(' ');
             if (IsCloned)
             {
-                sb.Append(_collection.raw).Append(' ').Append(_predicate.raw);
-            }
-            else
-            {
-                sb.Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
+                return base.ToString();
             }
 
+            var sb = new StringBuilder();
+            sb.Append(Name).Append(' ').Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
             return sb.ToString();
         }
 

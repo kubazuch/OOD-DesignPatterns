@@ -18,5 +18,7 @@ namespace ConsoleProject.CLI
         public abstract object Clone();
 
         public abstract void Execute();
+
+        public override string ToString() => Line;
     }
 }

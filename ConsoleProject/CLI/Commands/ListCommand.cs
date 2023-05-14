@@ -27,7 +27,7 @@ namespace ConsoleProject.CLI.Commands
             _data = other._data;
         }
 
-        public override void Process(List<string> context)
+        public override void Process(string line, List<string> context)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -37,12 +37,13 @@ namespace ConsoleProject.CLI.Commands
             if (context.Count > 1)
                 throw new TooManyArgumentsException(this);
 
+            Line = line;
             IsCloned = true;
         }
 
         public override void Execute() => Algorithms.ForEach(_collection.parsed.GetForwardIterator(), Console.WriteLine);
 
-        public override string ToString() => $"{Name} {(IsCloned ? _collection.raw : TypeArg)}";
+        public override string ToString() => IsCloned ? base.ToString() : $"{Name} {TypeArg}";
 
         public override object Clone() => new ListCommand(this);
 

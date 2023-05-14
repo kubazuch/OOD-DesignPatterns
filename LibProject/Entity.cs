@@ -23,5 +23,7 @@ namespace BTM
             ["tram"]    = Tram.AvailableFields,
             ["driver"]  = Driver.AvailableFields
         };
+
+        public abstract override string ToString();
     }
 }
