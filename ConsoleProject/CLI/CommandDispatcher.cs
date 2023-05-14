@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using ConsoleProject.CLI.Commands;
 
 namespace ConsoleProject.CLI
@@ -12,7 +11,7 @@ namespace ConsoleProject.CLI
     {
         private readonly Dictionary<string, Command> _registry;
 
-        internal readonly Queue<QueueableCommand> CommandQueue = new();
+        internal CommandQueue CommandQueue = new();
 
         public CommandDispatcher()
         {

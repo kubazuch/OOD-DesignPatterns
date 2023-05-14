@@ -1,15 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ConsoleProject
 {
     public static class Log
     {
         private static readonly Regex Regex = new(@"(§[0-9a-flr])", RegexOptions.Compiled);
+
+        public static void Write(StreamWriter writer, string s)
+        {
+            var split = Regex.Split(s);
+            foreach (var item in split)
+            {
+                if (item.Length != 2 || item[0] != '§')
+                {
+                    writer.Write(item);
+                }
+            }
+        }
+
+        public static void WriteLine(StreamWriter writer, string s = "")
+        {
+            Write(writer,s + "\n");
+        }
 
         public static void Write(string s)
         {

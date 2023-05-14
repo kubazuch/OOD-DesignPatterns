@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using BTM;
 using BTM.BaseData;
 using BTM.Builder;
@@ -24,6 +25,8 @@ namespace ConsoleProject.CLI.Commands
         private (string raw, ICollection parsed) _collection;
         private (string raw, AbstractFactory parsed) _factory;
         private AbstractBuilder? _builder;
+
+        public AddCommand() : base("", "") => throw new NotImplementedException();
 
         public AddCommand(DataManager data)
             : base("add", "Adds a new object of a particular type")
@@ -127,9 +130,34 @@ namespace ConsoleProject.CLI.Commands
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
             sb.Append("type=§e").Append(_collection.raw).AppendLine("§r");
+            sb.Append("representation=§e").Append(_factory.raw).AppendLine("§r");
             sb.Append(_builder.ToString(true));
 
             return sb.ToString();
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Type");
+            writer.WriteValue(_collection.raw);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Representation");
+            writer.WriteValue(_factory.raw);
+            writer.WriteEndElement();
+
+            foreach (var field in _builder.Fields)
+            {
+                if(field.Value.Value == null) continue;
+                writer.WriteStartElement(char.ToUpper(field.Key[0]) + field.Key[1..]);
+                writer.WriteValue(field.Value.Value);
+                writer.WriteEndElement();
+            }
         }
 
         public override void PrintHelp(List<string>? o)
