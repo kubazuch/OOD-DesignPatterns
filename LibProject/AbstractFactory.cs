@@ -6,11 +6,11 @@ namespace BTM
 {
     public abstract class AbstractFactory
     {
-        private readonly Dictionary<string, Func<AbstractBuilder, IEntity>> _creators;
+        private readonly Dictionary<string, Func<AbstractBuilder, Entity>> _creators;
 
         protected AbstractFactory()
         {
-            _creators = new Dictionary<string, Func<AbstractBuilder, IEntity>>
+            _creators = new Dictionary<string, Func<AbstractBuilder, Entity>>
             {
                 ["line"] = builder => CreateLine((LineBuilder)builder),
                 ["driver"] = builder => CreateDriver((DriverBuilder)builder),
@@ -20,20 +20,20 @@ namespace BTM
             };
         }
 
-        public abstract ILine CreateLine(LineBuilder builder);
+        public abstract Line CreateLine(LineBuilder builder);
 
-        public abstract IDriver CreateDriver(DriverBuilder builder);
+        public abstract Driver CreateDriver(DriverBuilder builder);
 
-        public abstract IBytebus CreateBytebus(BytebusBuilder builder);
+        public abstract Bytebus CreateBytebus(BytebusBuilder builder);
 
-        public abstract IStop CreateStop(StopBuilder builder);
+        public abstract Stop CreateStop(StopBuilder builder);
 
-        public abstract ITram CreateTram(TramBuilder builder);
+        public abstract Tram CreateTram(TramBuilder builder);
 
-        public IEntity CreateEntity(AbstractBuilder builder)
+        public Entity CreateEntity(AbstractBuilder builder)
         {
-            if (!_creators.TryGetValue(builder.Name, out var value))
-                throw new ArgumentException($"Unknown entity type: {builder.Name}. Possible types: {string.Join(", ", _creators.Keys)}");
+            if (!_creators.TryGetValue(builder.BuilderName, out var value))
+                throw new ArgumentException($"Unknown entity type: {builder.BuilderName}. Possible types: {string.Join(", ", _creators.Keys)}");
 
             return value(builder);
         }

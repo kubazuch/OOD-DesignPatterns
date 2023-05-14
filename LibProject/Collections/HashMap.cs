@@ -6,35 +6,35 @@ namespace BTM.Collections
     {
         public class HashMapIterator : Iterator
         {
-            internal int pos;
-            protected HashMap<T> map;
+            internal int Pos;
+            protected HashMap<T> Map;
 
             internal HashMapIterator(HashMap<T> map)
             {
-                this.map = map;
-                pos = -1;
+                this.Map = map;
+                Pos = -1;
             }
 
-            public override T Current => map.Items[pos];
+            public override T Current => Map.Items[Pos];
 
             public override bool MoveNext()
             {
-                if (pos == -1)
+                if (Pos == -1)
                 {
-                    if (map.Capacity <= 0) return false;
-                    pos = 0;
+                    if (Map.Capacity <= 0) return false;
+                    Pos = 0;
                 }
 
-                pos++;
-                while (pos < map.Capacity && !map._filled[pos])
-                    pos++;
+                Pos++;
+                while (Pos < Map.Capacity && !Map._filled[Pos])
+                    Pos++;
 
-                return pos < map.Capacity;
+                return Pos < Map.Capacity;
             }
 
             public override void Reset()
             {
-                pos = -1;
+                Pos = -1;
             }
         }
 
@@ -43,28 +43,28 @@ namespace BTM.Collections
             internal HashMapReverseIterator(HashMap<T> map)
                 : base(map)
             {
-                this.map = map;
-                pos = map.Capacity;
+                this.Map = map;
+                Pos = map.Capacity;
             }
 
             public override bool MoveNext()
             {
-                if (pos == map.Capacity)
+                if (Pos == Map.Capacity)
                 {
-                    if (map.Capacity <= 0) return false;
-                    pos = map.Capacity - 1;
+                    if (Map.Capacity <= 0) return false;
+                    Pos = Map.Capacity - 1;
                 }
 
-                pos--;
-                while (pos >= 0 && !map._filled[pos])
-                    pos--;
+                Pos--;
+                while (Pos >= 0 && !Map._filled[Pos])
+                    Pos--;
 
-                return pos >= 0;
+                return Pos >= 0;
             }
 
             public override void Reset()
             {
-                pos = map.Capacity;
+                Pos = Map.Capacity;
             }
         }
 
@@ -90,8 +90,8 @@ namespace BTM.Collections
 
         public void Remove(HashMapIterator iterator)
         {
-            Items[iterator.pos] = default;
-            _filled[iterator.pos] = false;
+            Items[iterator.Pos] = default;
+            _filled[iterator.Pos] = false;
         }
 
         public override Iterator GetForwardIterator() => new HashMapIterator(this);

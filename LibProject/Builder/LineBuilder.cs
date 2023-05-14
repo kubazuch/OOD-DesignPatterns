@@ -1,39 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BTM.Refraction;
 
 namespace BTM.Builder
 {
     public class LineBuilder : AbstractBuilder
     {
-        internal string _numberHex = "0";
-        internal int _numberDec = 0;
-        internal string _commonName = "Bus line";
-
-        public LineBuilder() : base("line")
+        public static readonly Dictionary<string, IField> AvailableFields = new List<IField>
         {
-            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
-            {
-                ["numberHex"] = SetNumberHex,
-                ["numberDec"] = v => SetNumberDec(int.Parse(v)),
-                ["commonName"] = SetCommonName
-            };
+            new Field<string?>("numberHex"), new Field<int?>("numberDec"), new Field<string?>("commonName")
+        }.ToDictionary(f => f.Name, f => f);
+
+        internal string? NumberHex;
+        internal int? NumberDec;
+        internal string? CommonName;
+
+        public LineBuilder(bool init = true) : base("line", AvailableFields)
+        {
+            AssignSettersAndGetters();
+
+            if(!init) return;
+
+            NumberHex = "0";
+            NumberDec = 0;
+            CommonName = "Bus line";
+        }
+
+        public sealed override void AssignSettersAndGetters()
+        {
+            var numberHex = (Field<string?>)Fields["numberHex"];
+            numberHex.SetSetter(value => NumberHex = value);
+            numberHex.SetGetter(() => NumberHex);
+
+            var numberDec = (Field<int?>)Fields["numberDec"];
+            numberDec.SetSetter(value => NumberDec = value);
+            numberDec.SetGetter(() => NumberDec);
+
+            var commonName = (Field<string?>)Fields["commonName"];
+            commonName.SetSetter(value => CommonName = value);
+            commonName.SetGetter(() => CommonName);
         }
 
         public LineBuilder SetNumberHex(string numberHex)
         {
-            this._numberHex = numberHex;
+            this.NumberHex = numberHex;
             return this;
         }
 
         public LineBuilder SetNumberDec(int numberDec)
         {
-            this._numberDec = numberDec;
+            this.NumberDec = numberDec;
             return this;
         }
 
         public LineBuilder SetCommonName(string commonName)
         {
-            this._commonName = commonName;
+            this.CommonName = commonName;
             return this;
         }
     }

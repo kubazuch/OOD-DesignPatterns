@@ -4,52 +4,52 @@
     {
         internal class Node
         {
-            public T data;
-            public Node next;
-            public Node prev;
+            public T Data;
+            public Node Next;
+            public Node Prev;
 
             public Node(T data, Node next = null, Node prev = null)
             {
-                this.data = data;
-                this.next = next;
-                this.prev = prev;
+                this.Data = data;
+                this.Next = next;
+                this.Prev = prev;
             }
         }
 
-        private Node head;
-        private Node tail;
+        private Node _head;
+        private Node _tail;
 
         public class DoublyLinkedListIterator : Collection<T>.Iterator
         {
-            internal Node curr;
-            protected DoublyLinkedList<T> list;
+            internal Node Curr;
+            protected DoublyLinkedList<T> List;
 
             public DoublyLinkedListIterator(DoublyLinkedList<T> list)
             {
-                this.list = list;
-                this.curr = null;
+                this.List = list;
+                this.Curr = null;
             }
 
-            public override T Current => curr.data;
+            public override T Current => Curr.Data;
 
             public override bool MoveNext()
             {
-                if (curr == null)
+                if (Curr == null)
                 {
-                    if (list.head == null) return false;
-                    curr = list.head;
+                    if (List._head == null) return false;
+                    Curr = List._head;
                     return true;
 
                 }
 
-                if (curr.next == null) return false;
-                curr = curr.next;
+                if (Curr.Next == null) return false;
+                Curr = Curr.Next;
                 return true;
             }
 
             public override void Reset()
             {
-                curr = null;
+                Curr = null;
             }
         }
 
@@ -58,70 +58,70 @@
             public DoublyLinkedListReverseIterator(DoublyLinkedList<T> list)
                 : base(list)
             {
-                this.list = list;
-                this.curr = null;
+                this.List = list;
+                this.Curr = null;
             }
 
             public override bool MoveNext()
             {
-                if (curr == null)
+                if (Curr == null)
                 {
-                    if (list.tail == null) return false;
-                    curr = list.tail;
+                    if (List._tail == null) return false;
+                    Curr = List._tail;
                     return true;
 
                 }
 
-                if (curr.prev == null) return false;
-                curr = curr.prev;
+                if (Curr.Prev == null) return false;
+                Curr = Curr.Prev;
                 return true;
             }
         }
 
         public DoublyLinkedList()
         {
-            head = null;
-            tail = null;
+            _head = null;
+            _tail = null;
         }
 
         public override void Add(T val)
         {
-            Node newNode = new Node(val, null, tail);
+            Node newNode = new Node(val, null, _tail);
 
-            if (tail != null)
+            if (_tail != null)
             {
-                tail.next = newNode;
+                _tail.Next = newNode;
             }
 
-            tail = newNode;
+            _tail = newNode;
 
-            head ??= tail;
+            _head ??= _tail;
         }
 
         public void Remove(DoublyLinkedListIterator iter)
         {
-            Node current = iter.curr;
-            if (current.prev == null)
+            Node current = iter.Curr;
+            if (current.Prev == null)
             {
-                head = current.next;
-                if (head != null)
+                _head = current.Next;
+                if (_head != null)
                 {
-                    head.prev = null;
+                    _head.Prev = null;
                 }
                 else
                 {
-                    tail = null;
+                    _tail = null;
                 }
             }
-            else if (current.next == null)
+            else if (current.Next == null)
             {
-                tail = current.prev;
-                tail.next = null;
+                _tail = current.Prev;
+                _tail.Next = null;
             }
             else
             {
-                current.prev.next = current.next;
-                current.next.prev = current.prev;
+                current.Prev.Next = current.Next;
+                current.Next.Prev = current.Prev;
             }
         }
 

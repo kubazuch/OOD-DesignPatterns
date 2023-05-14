@@ -1,44 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BTM.Refraction;
 
 namespace BTM.Builder
 {
-    public abstract class AbstractBuilder
+    public abstract class AbstractBuilder : IRefractive
     {
-        protected static readonly Dictionary<string, Func<AbstractBuilder>> Builders = new()
+        protected static readonly Dictionary<string, Func<bool, AbstractBuilder>> Builders = new()
         {
-            ["line"] = () => new LineBuilder(),
-            ["driver"] = () => new DriverBuilder(),
-            ["bytebus"] = () => new BytebusBuilder(),
-            ["stop"] = () => new StopBuilder(),
-            ["tram"] = () => new TramBuilder()
+            ["line"] = init => new LineBuilder(init),
+            ["driver"] = init => new DriverBuilder(init),
+            ["bytebus"] = init => new BytebusBuilder(init),
+            ["stop"] = init => new StopBuilder(init),
+            ["tram"] = init => new TramBuilder(init)
         };
 
-        protected Dictionary<string, Func<string, AbstractBuilder>> Setters { get; init; }
+        public string BuilderName { get; }
 
-        public string Name { get; }
+        public Dictionary<string, IField> Fields { get; }
 
-        public IEnumerable<string> Fields => Setters.Keys;
-
-        protected AbstractBuilder(string name)
+        protected AbstractBuilder(string builderName, Dictionary<string, IField> fields)
         {
-            Name = name;
+            BuilderName = builderName;
+            Fields = fields.ToDictionary(entry => entry.Key, entry => (IField)entry.Value.Clone());
         }
 
-        public AbstractBuilder Set(string name, string value)
-        {
-            if (!Setters.TryGetValue(name, out var setter))
-                throw new ArgumentException($"Unknown field: {name}. Possible fields: {string.Join(", ", Setters.Keys)}");
+        public abstract void AssignSettersAndGetters();
 
-            return setter(value);
-        }
-
-        public static AbstractBuilder GetByType(string type)
+        public static AbstractBuilder GetByType(string type, bool init = true)
         {
             if (!Builders.TryGetValue(type, out var value))
                 throw new ArgumentException($"Unknown entity type: {type}. Possible types: {string.Join(", ", Builders.Keys)}");
 
-            return value();
+            return value(init);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach (var field in Fields)
+            {
+                sb.Append(field.Key).Append("=\"").Append(field.Value.GetValue()).AppendLine("\"");
+            }
+            return sb.ToString().TrimEnd();
         }
 
     }

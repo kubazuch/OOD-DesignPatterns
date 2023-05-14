@@ -5,65 +5,55 @@ using System.Text;
 
 namespace BTM.TupleStackData
 {
-    public class TupleStackStopAdapter : IStop
+    public sealed class TupleStackStopAdapter : Stop
     {
-        private TupleStackStop adaptee;
+        private readonly TupleStackStop _adaptee;
 
-        public int Id => adaptee.TupleRepr.Item1;
+        public override int Id
+        {
+            get => _adaptee.TupleRepr.Item1;
+            set => throw new NotImplementedException();
+        }
 
-        public List<ILine> Lines
+        public override List<Line> Lines
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("lines"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.LINES[int.Parse(id)]).ToList();
+                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Lines[int.Parse(id)]).ToList();
             }
         }
-        public string Name
+        public override string Name
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("name"));
 
                 return fromStack[i + 2];
             }
+            set => throw new NotImplementedException();
         }
-        public string Type
+
+        public override string Type
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("type"));
 
                 return fromStack[i + 2];
             }
+            set => throw new NotImplementedException();
         }
 
         public TupleStackStopAdapter(TupleStackStop adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new Dictionary<string, Func<object>>
-            {
-                ["id"] = () => Id,
-                ["name"] = () => Name,
-                ["type"] = () => Type
-            };
-
-            TupleStackRepresentation.STOPS.Add(Id, this);
+            TupleStackRepresentation.Stops.Add(Id, this);
         }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("Stop #").Append(Id).Append(", \"").Append(Name).Append("\", type: ").AppendLine(Type);
-            builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
-            return builder.ToString();
-        }
-
-        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

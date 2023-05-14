@@ -5,36 +5,32 @@ using System.Text.RegularExpressions;
 
 namespace BTM.TextData
 {
-    public class TextTramAdapter : TextVehicleAdapter, ITram
+    public sealed class TextTramAdapter : Tram
     {
-        private static Regex TRAM = new Regex(@"#(?<id>\d+)\((?<carsNumber>.+)\)(?<lineid>\d+)", RegexOptions.Compiled);
+        private static Regex _tram = new Regex(@"#(?<id>\d+)\((?<carsNumber>.+)\)(?<lineid>\d+)", RegexOptions.Compiled);
 
-        private TextTram adaptee;
+        private readonly TextTram _adaptee;
 
-        public override int Id => int.Parse(TRAM.Match(adaptee.TextRepr).Groups["id"].Value);
-        public override Dictionary<string, Func<object>> Fields { get; }
-        public int CarsNumber => int.Parse(TRAM.Match(adaptee.TextRepr).Groups["carsNumber"].Value);
-        public ILine Line => TextRepresentation.LINES[int.Parse(TRAM.Match(adaptee.TextRepr).Groups["lineid"].Value)];
+        public override int Id
+        {
+            get => int.Parse(_tram.Match(_adaptee.TextRepr).Groups["id"].Value);
+            set => throw new NotImplementedException();
+        }
+        
+        public override int CarsNumber
+        {
+            get => int.Parse(_tram.Match(_adaptee.TextRepr).Groups["carsNumber"].Value);
+            set => throw new NotImplementedException();
+        }
+
+        public override Line Line => TextRepresentation.Lines[int.Parse(_tram.Match(_adaptee.TextRepr).Groups["lineid"].Value)];
 
         public TextTramAdapter(TextTram adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new Dictionary<string, Func<object>>()
-            {
-                ["id"] = () => Id,
-                ["carsNumber"] = () => CarsNumber
-            };
-
-            TextRepresentation.TRAMS.Add(Id, this);
-            TextRepresentation.VEHICLES.Add(Id, this);
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("Tram #").Append(Id).Append(", cars: ").Append(CarsNumber).Append(", line: ").Append(Line.NumberDec);
-            return builder.ToString();
+            TextRepresentation.Trams.Add(Id, this);
+            TextRepresentation.Vehicles.Add(Id, this);
         }
     }
 }

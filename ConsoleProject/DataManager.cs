@@ -1,10 +1,10 @@
 ﻿using BTM;
 using BTM.Collections;
-using BTM.Data;
 using BTM.TextData;
 using BTM.TupleStackData;
 using System;
 using System.Collections.Generic;
+using BTM.BaseData;
 
 namespace ConsoleProject
 {
@@ -12,11 +12,11 @@ namespace ConsoleProject
     {
         public Dictionary<string, ICollection> Mapping { get; }
 
-        public Vector<ILine> Lines { get; } = new();
-        public Vector<IStop> Stops { get; } = new();
-        public Vector<IBytebus> Bytebuses { get; } = new();
-        public Vector<ITram> Trams { get; } = new();
-        public Vector<IDriver> Drivers { get; } = new();
+        public Vector<Line> Lines { get; } = new();
+        public Vector<Stop> Stops { get; } = new();
+        public Vector<Bytebus> Bytebuses { get; } = new();
+        public Vector<Tram> Trams { get; } = new();
+        public Vector<Driver> Drivers { get; } = new();
 
         public DataManager(DataRepresentation representation)
         {
@@ -31,13 +31,13 @@ namespace ConsoleProject
 
             switch (representation)
             {
-                case DataRepresentation.BASE:
+                case DataRepresentation.Base:
                     PrepareBaseData();
                     break;
-                case DataRepresentation.TEXT:
+                case DataRepresentation.Text:
                     PrepareTextData();
                     break;
-                case DataRepresentation.TUPLE_STACK:
+                case DataRepresentation.TupleStack:
                     PrepareTupleStackData();
                     break;
             }
@@ -65,49 +65,49 @@ namespace ConsoleProject
         {
             List<Line> lines = new()
             {
-                new Line("10", 16, "SIMD"),
-                new Line("17", 23, "Isengard-Mordor"),
-                new Line("E", 14, "Museum of Plant")
+                new BaseLine("10", 16, "SIMD"),
+                new BaseLine("17", 23, "Isengard-Mordor"),
+                new BaseLine("E", 14, "Museum of Plant")
             };
             lines.ForEach(Lines.Add);
 
-            List<Stop> stops = new()
+            List<BaseStop> stops = new()
             {
-                new Stop(1, "SPIR-V", "bus", lines[0]),
-                new Stop(2, "GLSL", "tram", lines[0]),
-                new Stop(3, "HLSL", "other", lines[0]),
-                new Stop(4, "Dol Guldur", "bus", lines[1]),
-                new Stop(5, "Amon Hen", "bus", lines[1]),
-                new Stop(6, "Gondolin", "bus", lines[1]),
-                new Stop(7, "Bitazon", "tram", lines[1], lines[2]),
-                new Stop(8, "Bytecroft", "bus", lines[0], lines[2]),
-                new Stop(9, "Maple", "other", lines[2])
+                new BaseStop(1, "SPIR-V", "bus", lines[0]),
+                new BaseStop(2, "GLSL", "tram", lines[0]),
+                new BaseStop(3, "HLSL", "other", lines[0]),
+                new BaseStop(4, "Dol Guldur", "bus", lines[1]),
+                new BaseStop(5, "Amon Hen", "bus", lines[1]),
+                new BaseStop(6, "Gondolin", "bus", lines[1]),
+                new BaseStop(7, "Bitazon", "tram", lines[1], lines[2]),
+                new BaseStop(8, "Bytecroft", "bus", lines[0], lines[2]),
+                new BaseStop(9, "Maple", "other", lines[2])
             };
             stops.ForEach(Stops.Add);
 
-            List<Bytebus> bytebuses = new()
+            List<BaseBytebus> bytebuses = new()
             {
-                new Bytebus(11, "Byte5", lines[0], lines[1]),
-                new Bytebus(12, "bisel20", lines[0]),
-                new Bytebus(13, "bisel20", lines[0]),
-                new Bytebus(14, "gibgaz", lines[1], lines[2]),
-                new Bytebus(15, "gibgaz", lines[1])
+                new BaseBytebus(11, "Byte5", lines[0], lines[1]),
+                new BaseBytebus(12, "bisel20", lines[0]),
+                new BaseBytebus(13, "bisel20", lines[0]),
+                new BaseBytebus(14, "gibgaz", lines[1], lines[2]),
+                new BaseBytebus(15, "gibgaz", lines[1])
             };
             bytebuses.ForEach(Bytebuses.Add);
 
-            List<Tram> trams = new()
+            List<BaseTram> trams = new()
             {
-                new Tram(21, 1, lines[2]),
-                new Tram(22, 2, lines[2]),
-                new Tram(23, 6, lines[2])
+                new BaseTram(21, 1, lines[2]),
+                new BaseTram(22, 2, lines[2]),
+                new BaseTram(23, 6, lines[2])
             };
             trams.ForEach(Trams.Add);
 
-            List<Driver> drivers = new()
+            List<BaseDriver> drivers = new()
             {
-                new Driver("Tomas", "Chairman", 20, bytebuses[0], trams[0], bytebuses[4]),
-                new Driver("Tomas", "Thetank", 4, bytebuses[1], bytebuses[2], bytebuses[3]),
-                new Driver("Oru", "Bii", 55, trams[1], trams[2])
+                new BaseDriver("Tomas", "Chairman", 20, bytebuses[0], trams[0], bytebuses[4]),
+                new BaseDriver("Tomas", "Thetank", 4, bytebuses[1], bytebuses[2], bytebuses[3]),
+                new BaseDriver("Oru", "Bii", 55, trams[1], trams[2])
             };
             drivers.ForEach(Drivers.Add);
         }
@@ -216,8 +216,8 @@ namespace ConsoleProject
     }
     public enum DataRepresentation
     {
-        BASE,
-        TEXT,
-        TUPLE_STACK
+        Base,
+        Text,
+        TupleStack
     }
 }

@@ -6,40 +6,38 @@ using System.Text.RegularExpressions;
 
 namespace BTM.TextData
 {
-    public class TextDriverAdapter : IDriver
+    public class TextDriverAdapter : Driver
     {
-        private static Regex DRIVER = new Regex(@"(?<name>\w+) (?<surname>\w+)\((?<seniority>\d+)\)@(?:(?<vehicleid>\d+),?)+", RegexOptions.Compiled);
+        private static Regex _driver = new Regex(@"(?<name>\w+) (?<surname>\w+)\((?<seniority>\d+)\)@(?:(?<vehicleid>\d+),?)+", RegexOptions.Compiled);
 
-        private TextDriver adaptee;
+        private readonly TextDriver _adaptee;
 
-        public List<IVehicle> Vehicles => DRIVER.Match(adaptee.TextRepr).Groups["vehicleid"]
-            .Captures.Select(id => TextRepresentation.VEHICLES[int.Parse(id.Value)]).ToList();
-        public string Name => DRIVER.Match(adaptee.TextRepr).Groups["name"].Value;
-        public string Surname => DRIVER.Match(adaptee.TextRepr).Groups["surname"].Value;
-        public int Seniority => int.Parse(DRIVER.Match(adaptee.TextRepr).Groups["seniority"].Value);
+        public override List<Vehicle> Vehicles => _driver.Match(_adaptee.TextRepr).Groups["vehicleid"]
+            .Captures.Select(id => TextRepresentation.Vehicles[int.Parse(id.Value)]).ToList();
+        
+        public override string Name
+        {
+            get => _driver.Match(_adaptee.TextRepr).Groups["name"].Value;
+            set => throw new NotImplementedException();
+        }
+
+        public override string Surname
+        {
+            get => _driver.Match(_adaptee.TextRepr).Groups["surname"].Value;
+            set => throw new NotImplementedException();
+        }
+
+        public override int Seniority
+        {
+            get => int.Parse(_driver.Match(_adaptee.TextRepr).Groups["seniority"].Value);
+            set => throw new NotImplementedException();
+        }
 
         public TextDriverAdapter(TextDriver adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new Dictionary<string, Func<object>>
-            {
-                ["name"] = () => Name,
-                ["surname"] = () => Surname,
-                ["seniority"] = () => Seniority
-            };
-
-            TextRepresentation.DRIVERS.Add(TextRepresentation.DRIVERS.Count, this);
+            TextRepresentation.Drivers.Add(TextRepresentation.Drivers.Count, this);
         }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(Name).Append(' ').Append(Surname).Append(", ").Append(Seniority).AppendLine(" years of seniority");
-            builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
-            return builder.ToString();
-        }
-
-        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

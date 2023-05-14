@@ -4,40 +4,40 @@ namespace BTM.Collections
 {
     public class Vector<T> : Collection<T>
     {
-        private T[] items;
-        private int count;
+        private T[] _items;
+        private int _count;
 
         public class VectorIterator : Collection<T>.Iterator
         {
-            internal int curr;
-            protected Vector<T> list;
+            internal int Curr;
+            protected Vector<T> List;
 
             public VectorIterator(Vector<T> list)
             {
-                this.list = list;
-                this.curr = -1;
+                this.List = list;
+                this.Curr = -1;
             }
 
-            public override T Current => list.items[curr];
+            public override T Current => List._items[Curr];
 
             public override bool MoveNext()
             {
-                if (curr == -1)
+                if (Curr == -1)
                 {
-                    if (list.count <= 0) return false;
-                    curr = 0;
+                    if (List._count <= 0) return false;
+                    Curr = 0;
                     return true;
 
                 }
 
-                if (curr >= list.count - 1) return false;
-                curr++;
+                if (Curr >= List._count - 1) return false;
+                Curr++;
                 return true;
             }
 
             public override void Reset()
             {
-                curr = -1;
+                Curr = -1;
             }
         }
 
@@ -46,56 +46,56 @@ namespace BTM.Collections
             public VectorReverseIterator(Vector<T> list)
                 : base(list)
             {
-                this.curr = list.count;
+                this.Curr = list._count;
             }
 
             public override bool MoveNext()
             {
-                if (curr == list.count)
+                if (Curr == List._count)
                 {
-                    if (list.count <= 0) return false;
-                    curr = list.count - 1;
+                    if (List._count <= 0) return false;
+                    Curr = List._count - 1;
                     return true;
 
                 }
 
-                if (curr <= 0) return false;
-                curr--;
+                if (Curr <= 0) return false;
+                Curr--;
                 return true;
             }
 
             public override void Reset()
             {
-                curr = list.count;
+                Curr = List._count;
             }
         }
 
         public Vector()
         {
-            items = new T[4];
-            count = 0;
+            _items = new T[4];
+            _count = 0;
         }
 
         public override void Add(T item)
         {
-            if (count == items.Length)
+            if (_count == _items.Length)
             {
-                Array.Resize(ref items, items.Length * 2);
+                Array.Resize(ref _items, _items.Length * 2);
             }
 
-            items[count] = item;
-            count++;
+            _items[_count] = item;
+            _count++;
         }
 
         public void Remove(VectorIterator iter)
         {
-            for (int i = iter.curr; i < count - 1; i++)
+            for (int i = iter.Curr; i < _count - 1; i++)
             {
-                items[i] = items[i + 1];
+                _items[i] = _items[i + 1];
             }
 
-            count--;
-            items[count] = default(T);
+            _count--;
+            _items[_count] = default(T);
         }
 
         public override Iterator GetForwardIterator() =>
@@ -104,6 +104,6 @@ namespace BTM.Collections
         public override Iterator GetReverseIterator() =>
             new VectorReverseIterator(this);
 
-        public T this[int i] => items[i];
+        public T this[int i] => _items[i];
     }
 }

@@ -5,53 +5,45 @@ using System.Text;
 
 namespace BTM.TupleStackData
 {
-    public class TupleStackTramAdapter : TupleStackVehicleAdapter, ITram
+    public class TupleStackTramAdapter : Tram
     {
-        private TupleStackTram adaptee;
+        private readonly TupleStackTram _adaptee;
 
-        public override int Id => adaptee.TupleRepr.Item1;
-        public override Dictionary<string, Func<object>> Fields { get; }
+        public override int Id
+        {
+            get => _adaptee.TupleRepr.Item1;
+            set => throw new NotImplementedException();
+        }
 
-        public int CarsNumber
+        public override int CarsNumber
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("carsNumber"));
 
                 return int.Parse(fromStack[i + 2]);
             }
+            set => throw new NotImplementedException();
         }
 
-        public ILine Line
+        public override Line Line
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("line"));
 
-                return TupleStackRepresentation.LINES[int.Parse(fromStack[i + 2])];
+                return TupleStackRepresentation.Lines[int.Parse(fromStack[i + 2])];
             }
         }
 
         public TupleStackTramAdapter(TupleStackTram adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new Dictionary<string, Func<object>>()
-            {
-                ["id"] = () => Id,
-                ["carsNumber"] = () => CarsNumber
-            };
-
-            TupleStackRepresentation.TRAMS.Add(adaptee.TupleRepr.Item1, this);
-            TupleStackRepresentation.VEHICLES.Add(adaptee.TupleRepr.Item1, this);
-        }
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("Tram #").Append(Id).Append(", cars: ").Append(CarsNumber).Append(", line: ").Append(Line.NumberDec);
-            return builder.ToString();
+            TupleStackRepresentation.Trams.Add(adaptee.TupleRepr.Item1, this);
+            TupleStackRepresentation.Vehicles.Add(adaptee.TupleRepr.Item1, this);
         }
     }
 }

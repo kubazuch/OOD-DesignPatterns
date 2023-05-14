@@ -1,31 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BTM.Refraction;
 
 namespace BTM.Builder
 {
     public class BytebusBuilder : AbstractBuilder
     {
-        internal int _id = 0;
-        internal string _engineClass = "Byte5";
-
-        public BytebusBuilder() : base("bytebus")
+        public static readonly Dictionary<string, IField> AvailableFields = new List<IField>
         {
-            Setters = new Dictionary<string, Func<string, AbstractBuilder>>
-            {
-                ["id"] = v => SetId(int.Parse(v)),
-                ["engineClass"] = SetEngineClass
-            };
+            new Field<int?>("id"), new Field<string?>("engineClass")
+        }.ToDictionary(f => f.Name, f => f);
+
+        internal int? Id;
+        internal string? EngineClass;
+
+        public BytebusBuilder(bool init = true) : base("bytebus", AvailableFields)
+        {
+            AssignSettersAndGetters();
+
+            if (!init) return;
+            Id = 0;
+            EngineClass = "Byte5";
+        }
+
+        public sealed override void AssignSettersAndGetters()
+        {
+            var id = (Field<int?>)Fields["id"];
+            id.SetSetter(value => Id = value);
+            id.SetGetter(() => Id);
+
+            var engineClass = (Field<string?>)Fields["engineClass"];
+            engineClass.SetSetter(value => EngineClass = value);
+            engineClass.SetGetter(() => EngineClass);
         }
 
         public BytebusBuilder SetId(int id)
         {
-            this._id = id;
+            this.Id = id;
             return this;
         }
 
         public BytebusBuilder SetEngineClass(string engineClass)
         {
-            this._engineClass = engineClass;
+            this.EngineClass = engineClass;
             return this;
         }
     }

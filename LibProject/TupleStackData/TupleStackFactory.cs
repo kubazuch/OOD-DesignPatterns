@@ -5,30 +5,30 @@ namespace BTM.TupleStackData
 {
     public class TupleStackAbstractFactory : AbstractFactory
     {
-        public override ILine CreateLine(LineBuilder builder)
+        public override Line CreateLine(LineBuilder builder)
         {
-            return new TupleStackLineAdapter(new TupleStackLine(builder._numberHex, builder._numberDec, builder._commonName,
+            return new TupleStackLineAdapter(new TupleStackLine(builder.NumberHex!, builder.NumberDec!.Value, builder.CommonName!,
                 Array.Empty<int>(), Array.Empty<int>()));
         }
 
-        public override IDriver CreateDriver(DriverBuilder builder)
+        public override Driver CreateDriver(DriverBuilder builder)
         {
-            return new TupleStackDriverAdapter(new TupleStackDriver(builder._name, builder._surname, builder._seniority));
+            return new TupleStackDriverAdapter(new TupleStackDriver(builder.Name!, builder.Surname!, builder.Seniority!.Value));
         }
 
-        public override IBytebus CreateBytebus(BytebusBuilder builder)
+        public override Bytebus CreateBytebus(BytebusBuilder builder)
         {
-            return new TupleStackBytebusAdapter(new TupleStackBytebus(builder._id, builder._engineClass));
+            return new TupleStackBytebusAdapter(new TupleStackBytebus(builder.Id!.Value, builder.EngineClass!));
         }
 
-        public override IStop CreateStop(StopBuilder builder)
+        public override Stop CreateStop(StopBuilder builder)
         {
-            return new TupleStackStopAdapter(new TupleStackStop(builder._id, builder._name, builder._type));
+            return new TupleStackStopAdapter(new TupleStackStop(builder.Id!.Value, builder.Name!, builder.Type!));
         }
 
-        public override ITram CreateTram(TramBuilder builder)
+        public override Tram CreateTram(TramBuilder builder)
         {
-            return new TupleStackTramAdapter(new TupleStackTram(builder._id, builder._carsNumber, -1));
+            return new TupleStackTramAdapter(new TupleStackTram(builder.Id!.Value, builder.CarsNumber!.Value, -1));
         }
     }
 }

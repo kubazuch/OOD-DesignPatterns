@@ -5,79 +5,67 @@ using System.Text;
 
 namespace BTM.TupleStackData
 {
-    public class TupleStackLineAdapter : ILine
+    public sealed class TupleStackLineAdapter : Line
     {
-        private TupleStackLine adaptee;
+        private readonly TupleStackLine _adaptee;
 
-        public string NumberHex
+        public override string NumberHex
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("numberHex"));
 
                 return fromStack[i + 2];
             }
+            set => throw new NotImplementedException();
         }
 
-        public int NumberDec => adaptee.TupleRepr.Item1;
+        public override int NumberDec
+        {
+            get => _adaptee.TupleRepr.Item1;
+            set => throw new NotImplementedException();
+        }
 
-        public string CommonName
+        public override string CommonName
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("commonName"));
 
                 return fromStack[i + 2];
             }
+            set => throw new NotImplementedException();
         }
 
-        public List<IStop> Stops
+        public override List<Stop> Stops
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("stops"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.STOPS[int.Parse(id)]).ToList();
+                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Stops[int.Parse(id)]).ToList();
             }
         }
 
-        public List<IVehicle> Vehicles
+        public override List<Vehicle> Vehicles
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("vehicles"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.VEHICLES[int.Parse(id)]).ToList();
+                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Vehicles[int.Parse(id)]).ToList();
             }
         }
 
         public TupleStackLineAdapter(TupleStackLine adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new Dictionary<string, Func<object>>
-            {
-                ["numberHex"] = () => NumberHex,
-                ["numberDec"] = () => NumberDec,
-                ["commonName"] = () => CommonName
-            };
-
-            TupleStackRepresentation.LINES.Add(NumberDec, this);
+            TupleStackRepresentation.Lines.Add(NumberDec, this);
         }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("Line 0x").Append(NumberHex).Append(" (").Append(NumberDec).Append("), \"").Append(CommonName).AppendLine("\"");
-            builder.Append("\tStops: [").AppendJoin(", ", Stops.Select(x => x.Id)).AppendLine("]");
-            builder.Append("\tVehicles: [").AppendJoin(", ", Vehicles.Select(x => x.Id)).Append(']');
-            return builder.ToString();
-        }
-
-        public Dictionary<string, Func<object>> Fields { get; }
     }
 }

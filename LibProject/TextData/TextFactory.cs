@@ -5,30 +5,30 @@ namespace BTM.TextData
 {
     public class TextAbstractFactory : AbstractFactory
     {
-        public override ILine CreateLine(LineBuilder builder)
+        public override Line CreateLine(LineBuilder builder)
         {
-            return new TextLineAdapter(new TextLine(builder._numberHex, builder._numberDec, builder._commonName,
+            return new TextLineAdapter(new TextLine(builder.NumberHex!, builder.NumberDec!.Value, builder.CommonName!,
                 Array.Empty<int>(), Array.Empty<int>()));
         }
 
-        public override IDriver CreateDriver(DriverBuilder builder)
+        public override Driver CreateDriver(DriverBuilder builder)
         {
-            return new TextDriverAdapter(new TextDriver(builder._name, builder._surname, builder._seniority));
+            return new TextDriverAdapter(new TextDriver(builder.Name!, builder.Surname!, builder.Seniority!.Value));
         }
 
-        public override IBytebus CreateBytebus(BytebusBuilder builder)
+        public override Bytebus CreateBytebus(BytebusBuilder builder)
         {
-            return new TextBytebusAdapter(new TextBytebus(builder._id, builder._engineClass));
+            return new TextBytebusAdapter(new TextBytebus(builder.Id!.Value, builder.EngineClass!));
         }
 
-        public override IStop CreateStop(StopBuilder builder)
+        public override Stop CreateStop(StopBuilder builder)
         {
-            return new TextStopAdapter(new TextStop(builder._id, builder._name, builder._type));
+            return new TextStopAdapter(new TextStop(builder.Id!.Value, builder.Name!, builder.Type!));
         }
 
-        public override ITram CreateTram(TramBuilder builder)
+        public override Tram CreateTram(TramBuilder builder)
         {
-            return new TextTramAdapter(new TextTram(builder._id, builder._carsNumber, -1));
+            return new TextTramAdapter(new TextTram(builder.Id!.Value, builder.CarsNumber!.Value, -1));
         }
     }
 }

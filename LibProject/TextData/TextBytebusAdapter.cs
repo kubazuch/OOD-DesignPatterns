@@ -3,42 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BTM.Refraction;
 
 namespace BTM.TextData
 {
-    public class TextBytebusAdapter : TextVehicleAdapter, IBytebus
+    public sealed class TextBytebusAdapter : Bytebus
     {
-        private static Regex BYTEBUS = new Regex(@"#(?<id>\d+)\^(?<engineclass>.+)\*(?:(?<lineid>\d+),?)+", RegexOptions.Compiled);
+        private static Regex _bytebus = new Regex(@"#(?<id>\d+)\^(?<engineclass>.+)\*(?:(?<lineid>\d+),?)+", RegexOptions.Compiled);
 
-        private TextBytebus adaptee;
+        private readonly TextBytebus _adaptee;
 
-        public override int Id => int.Parse(BYTEBUS.Match(adaptee.TextRepr).Groups["id"].Value);
-        public override Dictionary<string, Func<object>> Fields { get; }
+        public override int Id
+        {
+            get => int.Parse(_bytebus.Match(_adaptee.TextRepr).Groups["id"].Value);
+            set => throw new NotImplementedException();
+        }
 
-        public List<ILine> Lines => BYTEBUS.Match(adaptee.TextRepr).Groups["lineid"]
-            .Captures.Select(id => TextRepresentation.LINES[int.Parse((string)id.Value)]).ToList();
-        public string EngineClass => BYTEBUS.Match(adaptee.TextRepr).Groups["engineclass"].Value;
+        public override List<Line> Lines => _bytebus.Match(_adaptee.TextRepr).Groups["lineid"]
+            .Captures.Select(id => TextRepresentation.Lines[int.Parse(id.Value)]).ToList();
+
+        public override string EngineClass
+        {
+            get => _bytebus.Match(_adaptee.TextRepr).Groups["engineclass"].Value;
+            set => throw new NotImplementedException();
+        }
 
         public TextBytebusAdapter(TextBytebus adaptee)
         {
-            Fields = new()
-            {
-                ["id"] = () => Id,
-                ["engineClass"] = () => EngineClass
-            };
+            this._adaptee = adaptee;
 
-            this.adaptee = adaptee;
-
-            TextRepresentation.BYTEBUSES.Add(Id, this);
-            TextRepresentation.VEHICLES.Add(Id, this);
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("ByteBus #").Append(Id).Append(", engine class: ").AppendLine(EngineClass);
-            builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
-            return builder.ToString();
+            TextRepresentation.Bytebuses.Add(Id, this);
+            TextRepresentation.Vehicles.Add(Id, this);
         }
     }
 }

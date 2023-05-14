@@ -6,7 +6,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackDriver : TupleStackRepresentation
     {
-        private static int ID = 0;
+        private static int _id = 0;
 
         public override Tuple<int, Stack<string>> TupleRepr { get; }
 
@@ -31,7 +31,7 @@ namespace BTM.TupleStackData
             toStack.AddRange(vehicles.Select(x => x.ToString()));
 
             toStack.Reverse();
-            TupleRepr = Tuple.Create(ID++, new Stack<string>(toStack));
+            TupleRepr = Tuple.Create(_id++, new Stack<string>(toStack));
         }
     }
 }

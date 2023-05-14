@@ -7,17 +7,17 @@ namespace ConsoleProject.CLI.Arguments
     {
         private readonly HashSet<string> _keys;
 
-        public EnumArgument(HashSet<string> arguments, bool required = false)
+        public EnumArgument(HashSet<string> arguments, string name = null, bool required = false)
         {
             this._keys = arguments;
             this.Required = required;
-            this.IncludeRaw = false;
+            this.Name = name;
         }
 
-        public override string Parse(DataManager data, string arg)
+        public string Parse(string arg)
         {
             if (!_keys.Contains(arg))
-                throw new ArgumentException($"Invalid value: {arg}. Possible values: {string.Join(", ", _keys)}");
+                throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _keys)}");
 
             return arg;
         }
@@ -29,17 +29,17 @@ namespace ConsoleProject.CLI.Arguments
     {
         private readonly Dictionary<string, T> _dictionary;
 
-        public EnumArgument(Dictionary<string, T> dictionary, bool required = false, bool includeRaw = false)
+        public EnumArgument(Dictionary<string, T> dictionary, string name = null, bool required = false)
         {
             this._dictionary = dictionary;
             this.Required = required;
-            this.IncludeRaw = includeRaw;
+            this.Name = name;
         }
 
-        public override T Parse(DataManager data, string arg)
+        public T Parse(string arg)
         {
             if (!_dictionary.TryGetValue(arg, out T value))
-                throw new ArgumentException($"Invalid value: {arg}. Possible values: {string.Join(", ", _dictionary.Keys)}");
+                throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _dictionary.Keys)}");
 
             return value;
         }

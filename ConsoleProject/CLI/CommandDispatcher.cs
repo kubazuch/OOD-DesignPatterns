@@ -4,50 +4,28 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ConsoleProject.CLI.Commands;
 
 namespace ConsoleProject.CLI
 {
     public class CommandDispatcher
     {
-        public static readonly string Separator = " ";
-        private static readonly Regex Regex = new(@"[\""].+?[\""]|[^ ]+", RegexOptions.Compiled);
         private readonly Dictionary<string, Command> _registry;
-        private readonly DataManager _data;
 
-        public CommandDispatcher(DataManager data)
+        public CommandDispatcher()
         {
-            this._data = data;
-            this._registry = new Dictionary<string, Command>();
+            _registry = new Dictionary<string, Command>();
 
-            Register(Command.Named("help").WithDescription("Prints help information for all commands.").Calls(_ =>
-            {
-                foreach (Command c in _registry.Values)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(c.Name);
-                    Console.ResetColor();
-                    Console.WriteLine($"\t{c.Description}");
-                    Console.Write("Usage: \n\t");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(c.ToString());
-                    Console.ResetColor();
-                    if (c.UsageDetails != null)
-                        Console.WriteLine('\n' + c.UsageDetails);
-                    Console.WriteLine();
-                }
-            }));
+            Register(new HelpCommand(_registry));
         }
+
+        public IEnumerable<string> GetRegisteredCommands() => _registry.Keys;
 
         public void Register(Command command)
         {
-            if (this._registry.ContainsKey(command.Name))
+            if (_registry.ContainsKey(command.Name))
                 throw new DuplicateNameException($"Command with name {command.Name} is already registered!");
-            this._registry[command.Name] = command;
-        }
-
-        public void Register(Command.CommandBuilder command)
-        {
-            Register(command.Build());
+            _registry[command.Name] = command;
         }
 
         public void Parse(string line)
@@ -87,12 +65,22 @@ namespace ConsoleProject.CLI
 
             result = result.Select(s => s.Replace("\\\"", "\"")).ToList();
 
-            if (!_registry.TryGetValue(result[0], out Command cmd))
+            if (!_registry.TryGetValue(result[0], out var cmd))
             {
                 throw new ArgumentException($"Unknown command: {result[0]}. Type \"help\" for help");
             }
 
-            cmd.Execute(_data, result.Skip(1).ToList());
+            if (cmd is QueueableCommand queueableCmd)
+            {
+                var copy = (QueueableCommand) queueableCmd.Clone();
+                copy.Process(result.Skip(1).ToList());
+                Console.WriteLine(copy);
+                //copy.Execute();
+            }
+            else
+            {
+                cmd.Process(result.Skip(1).ToList());
+            }
         }
     }
 }

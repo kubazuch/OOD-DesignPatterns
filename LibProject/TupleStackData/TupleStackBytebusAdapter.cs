@@ -5,55 +5,45 @@ using System.Text;
 
 namespace BTM.TupleStackData
 {
-    public class TupleStackBytebusAdapter : TupleStackVehicleAdapter, IBytebus
+    public sealed class TupleStackBytebusAdapter : Bytebus
     {
-        private TupleStackBytebus adaptee;
+        private TupleStackBytebus _adaptee;
 
-        public override int Id => adaptee.TupleRepr.Item1;
-        public override Dictionary<string, Func<object>> Fields { get; }
+        public override int Id
+        {
+            get => _adaptee.TupleRepr.Item1;
+            set => throw new NotImplementedException();
+        }
 
-        public List<ILine> Lines
+        public override List<Line> Lines
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("lines"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.LINES[int.Parse(id)]).ToList();
+                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Lines[int.Parse(id)]).ToList();
             }
         }
 
-        public string EngineClass
+        public override string EngineClass
         {
             get
             {
-                List<string> fromStack = adaptee.TupleRepr.Item2.ToList();
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("engineClass"));
 
                 return fromStack[i + 2];
             }
+            set => throw new NotImplementedException();
         }
 
         public TupleStackBytebusAdapter(TupleStackBytebus adaptee)
         {
-            this.adaptee = adaptee;
+            this._adaptee = adaptee;
 
-            Fields = new()
-            {
-                ["id"] = () => Id,
-                ["engineClass"] = () => EngineClass
-            };
-
-            TupleStackRepresentation.BYTEBUSES.Add(Id, this);
-            TupleStackRepresentation.VEHICLES.Add(Id, this);
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("ByteBus #").Append(Id).Append(", engine class: ").AppendLine(EngineClass);
-            builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
-            return builder.ToString();
+            TupleStackRepresentation.Bytebuses.Add(Id, this);
+            TupleStackRepresentation.Vehicles.Add(Id, this);
         }
     }
 }
