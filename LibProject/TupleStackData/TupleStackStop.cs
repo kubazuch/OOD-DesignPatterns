@@ -6,7 +6,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackStop : TupleStackRepresentation
     {
-        public override Tuple<int, Stack<string>> TupleRepr { get; }
+        public override Tuple<int, Stack<string>> TupleRepr { get; set; }
 
         public TupleStackStop(int id, string name, string type, params int[] lines)
         {

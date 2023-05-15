@@ -11,7 +11,7 @@ namespace BTM.TupleStackData
         public override int Id
         {
             get => _adaptee.TupleRepr.Item1;
-            set => throw new NotImplementedException();
+            set => _adaptee.TupleRepr = new Tuple<int, Stack<string>>(value, _adaptee.TupleRepr.Item2);
         }
 
         public override List<Line> Lines
@@ -34,7 +34,16 @@ namespace BTM.TupleStackData
 
                 return fromStack[i + 2];
             }
-            set => throw new NotImplementedException();
+            set
+            {
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
+                int i = fromStack.FindIndex(x => x.Equals("engineClass"));
+
+                fromStack[i + 2] = value;
+                fromStack.Reverse();
+
+                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
+            }
         }
 
         public TupleStackBytebusAdapter(TupleStackBytebus adaptee)

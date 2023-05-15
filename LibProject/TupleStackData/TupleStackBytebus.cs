@@ -6,7 +6,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackBytebus : TupleStackVehicle
     {
-        public override Tuple<int, Stack<string>> TupleRepr { get; }
+        public override Tuple<int, Stack<string>> TupleRepr { get; set; }
 
         public TupleStackBytebus(int id, string engineClass, params int[] lines)
         {

@@ -87,6 +87,17 @@ namespace BTM.Collections
             _count++;
         }
 
+        public override void Delete(T obj)
+        {
+            var iter = (VectorIterator)GetForwardIterator();
+            while (iter.MoveNext())
+                if (iter.Current.Equals(obj))
+                {
+                    Remove(iter);
+                    return;
+                }
+        }
+
         public void Remove(VectorIterator iter)
         {
             for (int i = iter.Curr; i < _count - 1; i++)

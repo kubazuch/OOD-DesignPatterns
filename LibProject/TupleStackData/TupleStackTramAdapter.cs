@@ -11,7 +11,7 @@ namespace BTM.TupleStackData
         public override int Id
         {
             get => _adaptee.TupleRepr.Item1;
-            set => throw new NotImplementedException();
+            set => _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
         }
 
         public override int CarsNumber
@@ -23,7 +23,16 @@ namespace BTM.TupleStackData
 
                 return int.Parse(fromStack[i + 2]);
             }
-            set => throw new NotImplementedException();
+            set
+            {
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
+                int i = fromStack.FindIndex(x => x.Equals("carsNumber"));
+
+                fromStack[i + 2] = value.ToString();
+                fromStack.Reverse();
+
+                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
+            }
         }
 
         public override Line Line

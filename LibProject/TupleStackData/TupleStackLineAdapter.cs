@@ -17,13 +17,22 @@ namespace BTM.TupleStackData
 
                 return fromStack[i + 2];
             }
-            set => throw new NotImplementedException();
+            set
+            {
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
+                int i = fromStack.FindIndex(x => x.Equals("numberHex"));
+
+                fromStack[i + 2] = value;
+                fromStack.Reverse();
+
+                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
+            }
         }
 
         public override int NumberDec
         {
             get => _adaptee.TupleRepr.Item1;
-            set => throw new NotImplementedException();
+            set => _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
         }
 
         public override string CommonName
@@ -35,7 +44,16 @@ namespace BTM.TupleStackData
 
                 return fromStack[i + 2];
             }
-            set => throw new NotImplementedException();
+            set
+            {
+                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
+                int i = fromStack.FindIndex(x => x.Equals("commonName"));
+
+                fromStack[i + 2] = value;
+                fromStack.Reverse();
+
+                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
+            }
         }
 
         public override List<Stop> Stops

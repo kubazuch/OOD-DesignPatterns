@@ -12,6 +12,7 @@ namespace BTM.Collections
         public IIterator GetForwardIterator();
         public IIterator GetReverseIterator();
         void Add(object obj);
+        void Delete(object obj);
     }
 
     public abstract class Collection<T> : ICollection, IEnumerable<T>
@@ -38,6 +39,8 @@ namespace BTM.Collections
         IEnumerator IEnumerable.GetEnumerator() => GetForwardIterator();
 
         public abstract void Add(T obj);
+        public abstract void Delete(T obj);
         public void Add(object obj) => Add((T)obj);
+        public void Delete(object obj) => Delete((T)obj);
     }
 }

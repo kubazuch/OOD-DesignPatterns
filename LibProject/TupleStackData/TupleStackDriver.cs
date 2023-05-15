@@ -8,7 +8,7 @@ namespace BTM.TupleStackData
     {
         private static int _id = 0;
 
-        public override Tuple<int, Stack<string>> TupleRepr { get; }
+        public override Tuple<int, Stack<string>> TupleRepr { get; set; }
 
         public TupleStackDriver(string name, string surname, int seniority, params int[] vehicles)
         {

@@ -5,6 +5,6 @@ namespace BTM.TupleStackData
 {
     public abstract class TupleStackVehicle : TupleStackRepresentation
     {
-        public abstract override Tuple<int, Stack<string>> TupleRepr { get; }
+        public abstract override Tuple<int, Stack<string>> TupleRepr { get; set; }
     }
 }

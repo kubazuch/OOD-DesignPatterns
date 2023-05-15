@@ -88,6 +88,17 @@ namespace BTM.Collections
             _filled[pos] = true;
         }
 
+        public override void Delete(T obj)
+        {
+            var iter = (HashMapIterator) GetForwardIterator();
+            while (iter.MoveNext())
+                if (iter.Current.Equals(obj))
+                {
+                    Remove(iter);
+                    return;
+                }
+        }
+
         public void Remove(HashMapIterator iterator)
         {
             Items[iterator.Pos] = default;

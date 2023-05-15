@@ -6,7 +6,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackLine : TupleStackRepresentation
     {
-        public override Tuple<int, Stack<string>> TupleRepr { get; }
+        public override Tuple<int, Stack<string>> TupleRepr { get; set; }
 
         public TupleStackLine(string numberHex, int numberDec, string commonName, int[] stops, int[] vehicles)
         {

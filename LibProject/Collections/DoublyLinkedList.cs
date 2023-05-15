@@ -98,6 +98,17 @@
             _head ??= _tail;
         }
 
+        public override void Delete(T obj)
+        {
+            var iter = (DoublyLinkedListIterator) GetForwardIterator();
+            while(iter.MoveNext())
+                if (iter.Current.Equals(obj))
+                {
+                    Remove(iter);
+                    return;
+                }
+        }
+
         public void Remove(DoublyLinkedListIterator iter)
         {
             Node current = iter.Curr;

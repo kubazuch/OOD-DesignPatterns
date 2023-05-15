@@ -10,7 +10,7 @@ namespace ConsoleProject.CLI.Commands
 {
     public class QueueCommand : Command
     {
-        private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "import", "export", "commit" }, "subcommand", true);
+        private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "export", "commit", "dismiss", "load" }, "subcommand", true);
         private static readonly PathArgument PathArg = new(true);
         private static readonly EnumArgument FormatArg = new(new List<string> { "XML", "plaintext" }, "subcommand", false);
 
@@ -36,7 +36,10 @@ namespace ConsoleProject.CLI.Commands
                 case "export":
                     ProcessExport(context);
                     break;
-                case "import":
+                case "dismiss":
+                    ProcessDismiss(context);
+                    break;
+                case "load":
                     ProcessImport(context);
                     break;
                 case "commit":
@@ -104,25 +107,21 @@ namespace ConsoleProject.CLI.Commands
         private void ProcessImport(List<string> context)
         {
             if (context.Count == 1)
-                throw new MissingArgumentException($"queue export {PathArg} {FormatArg}", 1, PathArg.Name);
+                throw new MissingArgumentException($"queue load {PathArg}", 1, PathArg.Name);
 
             var path = PathArg.Parse(context[1], true);
+            var ext = Path.GetExtension(path).ToLower();
 
-            var format = "XML";
-            if (context.Count == 3)
-                format = FormatArg.Parse(context[2]);
-
-            else if (context.Count > 3)
-                throw new TooManyArgumentsException($"queue export {PathArg} {FormatArg}");
-
-            switch (format)
+            switch (ext)
             {
-                case "XML":
+                case ".xml":
                     DeserializeXML();
                     break;
-                case "plaintext":
+                case ".txt":
                     DeserializePlain();
                     break;
+                default:
+                    throw new ArgumentException($"Unknown extension: `§l{ext}§r`");
             }
 
             void DeserializeXML()
@@ -167,10 +166,12 @@ namespace ConsoleProject.CLI.Commands
             if (context.Count > 1)
                 throw new TooManyArgumentsException("queue commit");
 
+            int i = 1;
             while (_dispatcher.CommandQueue.TryDequeue(out QueueableCommand cmd))
             {
                 try
                 {
+                    Log.WriteLine($"§5Command #{i++} ({cmd.Name}):");
                     cmd.Execute();
                 }
                 catch (ArgumentException ex)
@@ -180,6 +181,15 @@ namespace ConsoleProject.CLI.Commands
 
                 Log.WriteLine();
             }
+        }
+
+        private void ProcessDismiss(List<string> context)
+        {
+            if (context.Count > 1)
+                throw new TooManyArgumentsException("queue dismiss");
+
+            _dispatcher.CommandQueue.Clear();
+            Log.WriteLine($"§aCommand queue cleared");
         }
 
         public override void PrintHelp(List<string>? o)
@@ -215,11 +225,17 @@ namespace ConsoleProject.CLI.Commands
                 case "commit":
                     Log.WriteLine($"§2{Name} commit§r\tExecutes all commands from the queue");
                     Log.WriteLine("\nUsage:");
-                    Log.WriteLine($"\t§l{ToString()}");
+                    Log.WriteLine($"\t§lqueue commit");
                     Log.WriteLine("\nExecutes all commands stored in the queue in order of their addition. After that queue is empty.");
                     break;
+                case "dismiss":
+                    Log.WriteLine($"§2{Name} dismiss§r\tClears command queue");
+                    Log.WriteLine("\nUsage:");
+                    Log.WriteLine($"\t§lqueue dismiss");
+                    Log.WriteLine("\nThis command clears all commands which are currently stored in the queue.");
+                    break;
                 default:
-                    throw new ArgumentException($"Unknown subcommand: `§l{o[0]}§r. Possible subcommands: §lprint, export, commit");
+                    throw new ArgumentException($"Unknown subcommand: `§l{o[0]}§r. Possible subcommands: §lprint, export, commit, load, dismiss");
             }
         }
     }

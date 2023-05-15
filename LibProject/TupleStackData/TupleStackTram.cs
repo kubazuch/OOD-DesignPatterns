@@ -5,7 +5,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackTram : TupleStackVehicle
     {
-        public override Tuple<int, Stack<string>> TupleRepr { get; }
+        public override Tuple<int, Stack<string>> TupleRepr { get; set; }
 
         public TupleStackTram(int id, int carsNumber, int line)
         {
