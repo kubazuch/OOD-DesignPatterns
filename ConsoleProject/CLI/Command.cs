@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace ConsoleProject.CLI
@@ -15,7 +17,7 @@ namespace ConsoleProject.CLI
             Description = description;
         }
 
-        public abstract void Process(string line, List<string> context);
+        public abstract void Process(List<string> raw, List<string> context, TextReader source, bool silent = false);
 
         public override string ToString() => Line;
 

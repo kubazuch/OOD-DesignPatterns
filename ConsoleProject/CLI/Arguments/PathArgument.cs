@@ -11,11 +11,13 @@ namespace ConsoleProject.CLI.Arguments
             this.Name = name;
         }
 
-        public string Parse(string arg)
+        public string Parse(string arg, bool exist = false)
         {
             var parent = Path.GetDirectoryName(arg);
-            if (parent != "" && !Directory.Exists(parent))
-                throw new ArgumentException($"Cannot create file at nonexistent directory `§l{parent}§r`");
+            if (!string.IsNullOrEmpty(parent) && !Directory.Exists(parent))
+                throw new ArgumentException($"Cannot open file at nonexistent directory `§l{parent}§r`");
+            if (exist && !File.Exists(arg))
+                throw new ArgumentException($"Cannot open nonexistent file `§l{parent}§r`");
 
             return arg;
         }

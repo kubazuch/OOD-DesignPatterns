@@ -44,16 +44,15 @@ namespace ConsoleProject
                 string input = Console.ReadLine();
                 try
                 {
-                    _commandDispatcher.Parse(input.Trim());
+                    _commandDispatcher.Parse(input.Trim(), Console.In, true);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Log.HandleException(ex);
                 }
                 catch (ArgumentException ex)
                 {
-                    using ((TemporaryConsoleColor) ConsoleColor.DarkRed)
-                    {
-                        Log.WriteLine(ex.Message);
-                        if (ex.InnerException != null)
-                            Log.WriteLine($"Caused by: {ex.InnerException.Message}");
-                    }
+                    Log.HandleException(ex);
                 }
             }
         }

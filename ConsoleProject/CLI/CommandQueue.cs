@@ -15,7 +15,31 @@ namespace ConsoleProject.CLI
 
         public void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            bool wasEmpty = reader.IsEmptyElement;
+            reader.Read();
+            if (wasEmpty)
+                return;
+
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                if (reader.IsStartElement())
+                {
+                    string elementName = reader.Name;
+                    reader.ReadStartElement();
+                    string commandName = char.ToLower(elementName[0]) + elementName.Substring(1, elementName.IndexOf("Command", StringComparison.Ordinal) - 1);
+                    QueueableCommand command = App.Instance._commandDispatcher.GetCommandClone(commandName);
+                    command.ReadXml(reader);
+                    Enqueue(command);
+                    reader.ReadEndElement();
+                    reader.MoveToContent();
+                }
+                else
+                {
+                    reader.Read();
+                }
+            }
+
+            reader.ReadEndElement();
         }
 
         public void WriteXml(XmlWriter writer)

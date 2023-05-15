@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using ConsoleProject.CLI;
 
 namespace ConsoleProject
 {
@@ -51,6 +52,19 @@ namespace ConsoleProject
         public static void WriteLine(string s = "")
         {
             Write(s + "\n");
+        }
+
+        public static void HandleException(Exception ex)
+        {
+            using ((TemporaryConsoleColor)ConsoleColor.DarkRed)
+            {
+                Log.WriteLine(ex.Message);
+                while (ex.InnerException != null)
+                {
+                    Log.WriteLine($"Caused by: {ex.InnerException.Message}");
+                    ex = ex.InnerException;
+                }
+            }
         }
     }
 }

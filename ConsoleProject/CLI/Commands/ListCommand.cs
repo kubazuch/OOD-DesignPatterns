@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 using BTM.Collections;
@@ -33,7 +34,7 @@ namespace ConsoleProject.CLI.Commands
             Line = other.Line;
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -43,7 +44,7 @@ namespace ConsoleProject.CLI.Commands
             if (context.Count > 1)
                 throw new TooManyArgumentsException(this);
 
-            Line = line;
+            Line = string.Join(' ', raw);
             Cloned = true;
         }
 
@@ -62,7 +63,13 @@ namespace ConsoleProject.CLI.Commands
 
         public override void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            reader.ReadStartElement("Type");
+            var type = reader.ReadContentAsString();
+            reader.ReadEndElement();
+            _collection = (type, TypeArg.Parse(_data, type));
+
+            Line = $"list {type}";
+            Cloned = true;
         }
 
         public override void WriteXml(XmlWriter writer)

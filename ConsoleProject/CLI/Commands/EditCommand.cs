@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,7 +47,7 @@ namespace ConsoleProject.CLI.Commands
             Line = other.Line;
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -60,15 +61,19 @@ namespace ConsoleProject.CLI.Commands
                 predicates.Add(PredicateArg.Parse(context[0], context[i]));
             }
 
-            _predicate = (context.Skip(1).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
-
-            Log.WriteLine($"Editing §l{_collection.raw}§r");
-            Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
+            _predicate = (raw.Skip(2).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
+            
+            if(!silent)
+            {
+                Log.WriteLine($"Editing §l{_collection.raw}§r");
+                Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
+            }
 
             do
             {
-                Log.Write("§e+ ");
-                var cmd = Console.ReadLine().Trim();
+                if (!silent)
+                    Log.Write("§e+ ");
+                var cmd = source.ReadLine().Trim();
                 var match = Assignment.Match(cmd);
 
                 if (cmd == "")
@@ -84,19 +89,15 @@ namespace ConsoleProject.CLI.Commands
                     }
                     catch (ArgumentException ex)
                     {
-                        using ((TemporaryConsoleColor)ConsoleColor.DarkRed)
-                        {
-                            Log.WriteLine(ex.Message);
-                            if (ex.InnerException != null)
-                                Log.WriteLine($"Caused by: {ex.InnerException.Message}");
-                        }
+                        Log.HandleException(ex);
                     }
                 }
                 else if (cmd is "DONE")
                     break;
                 else if (cmd is "EXIT")
                 {
-                    Log.WriteLine($"§eEdition of {_collection.raw} terminated.");
+                    if (!silent)
+                        Log.WriteLine($"§eEdition of {_collection.raw} terminated.");
                     return;
                 }
                 else
@@ -106,7 +107,7 @@ namespace ConsoleProject.CLI.Commands
             } while (true);
 
             var sb = new StringBuilder();
-            sb.AppendLine(line);
+            sb.AppendLine(string.Join(' ', raw));
             sb.Append(_builder).AppendLine();
             sb.Append("DONE");
 
@@ -127,7 +128,7 @@ namespace ConsoleProject.CLI.Commands
             }
             
             if (count != 1)
-                throw new ArgumentException($"Predicate `§l{string.Join("§r and §l", _predicate.raw.Skip(1))}§r` should specify one record uniquely, found: §l{count}");
+                throw new ArgumentException($"Predicate `§l{string.Join("§r and §l", _predicate.raw)}§r` should specify one record uniquely, found: §l{count}");
 
             foreach (var kvp in _builder.Fields)
             {
@@ -146,7 +147,7 @@ namespace ConsoleProject.CLI.Commands
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
             sb.Append("type=§e").AppendLine(_collection.raw);
-            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw.Skip(1))).Append("§r");
+            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw)).AppendLine("§r");
             sb.Append(_builder.ToString(true));
 
             return sb.ToString();
@@ -154,7 +155,54 @@ namespace ConsoleProject.CLI.Commands
 
         public override void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            reader.ReadStartElement("Type");
+            var type = reader.ReadContentAsString().RemoveQuotes();
+            reader.ReadEndElement();
+            _collection = (type, TypeArg.Parse(_data, type));
+            _builder = AbstractBuilder.GetByType(_collection.raw, false);
+
+            List<Predicate<Entity>> predicates = new List<Predicate<Entity>>();
+            List<string> raw = new List<string>();
+            while (reader.IsStartElement() && reader.Name == "Predicate")
+            {
+                reader.ReadStartElement();
+                string pred = reader.ReadContentAsString();
+
+                predicates.Add(PredicateArg.Parse(type, pred.RemoveQuotes()));
+                raw.Add(pred);
+
+                reader.ReadEndElement();
+                reader.MoveToContent();
+            }
+
+            _predicate = (raw, entity => predicates.All(predicate => predicate((Entity)entity)));
+
+            var sb = new StringBuilder($"edit {type} {string.Join(' ', raw)}");
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                if (reader.IsStartElement())
+                {
+                    string elementName = reader.Name;
+                    reader.ReadStartElement();
+                    string fieldName = char.ToLower(elementName[0]) + elementName[1..];
+                    string fieldVal = reader.ReadContentAsString();
+
+                    ((IRefractive)_builder).SetValueByName(fieldName, fieldVal.RemoveQuotes());
+
+                    sb.Append($"\n{fieldName}=\"{fieldVal}\"");
+                    reader.ReadEndElement();
+                    reader.MoveToContent();
+                }
+                else
+                {
+                    reader.Read();
+                }
+            }
+
+            sb.Append("\nDONE");
+
+            Line = sb.ToString();
+            Cloned = true;
         }
 
         public override void WriteXml(XmlWriter writer)

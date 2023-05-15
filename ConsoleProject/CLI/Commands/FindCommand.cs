@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -40,7 +41,7 @@ namespace ConsoleProject.CLI.Commands
             Line = other.Line;
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -53,9 +54,9 @@ namespace ConsoleProject.CLI.Commands
                 predicates.Add(PredicateArg.Parse(context[0], context[i]));
             }
 
-            _predicate = (context.Skip(1).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
+            _predicate = (raw.Skip(2).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
 
-            Line = line;
+            Line = string.Join(' ', raw);
             Cloned = true;
         }
 
@@ -66,14 +67,36 @@ namespace ConsoleProject.CLI.Commands
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
             sb.Append("type=§e").AppendLine(_collection.raw);
-            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw.Skip(1))).Append("§r");
+            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw)).Append("§r");
 
             return sb.ToString();
         }
 
         public override void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            reader.ReadStartElement("Type");
+            var type = reader.ReadContentAsString();
+            reader.ReadEndElement();
+            _collection = (type, TypeArg.Parse(_data, type));
+
+            List<Predicate<Entity>> predicates = new List<Predicate<Entity>>();
+            List<string> raw = new List<string>();
+            while (reader.IsStartElement() && reader.Name == "Predicate")
+            {
+                reader.ReadStartElement();
+                string pred = reader.ReadContentAsString();
+
+                predicates.Add(PredicateArg.Parse(type, pred.RemoveQuotes()));
+                raw.Add(pred);
+
+                reader.ReadEndElement();
+                reader.MoveToContent();
+            }
+
+            _predicate = (raw, entity => predicates.All(predicate => predicate((Entity)entity)));
+
+            Line = $"find {type} {string.Join(' ', raw)}";
+            Cloned = true;
         }
 
         public override void WriteXml(XmlWriter writer)

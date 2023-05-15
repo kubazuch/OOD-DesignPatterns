@@ -10,7 +10,7 @@ namespace ConsoleProject.CLI.Commands
 {
     public class QueueCommand : Command
     {
-        private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "export", "commit" }, "subcommand", true);
+        private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "import", "export", "commit" }, "subcommand", true);
         private static readonly PathArgument PathArg = new(true);
         private static readonly EnumArgument FormatArg = new(new List<string> { "XML", "plaintext" }, "subcommand", false);
 
@@ -23,7 +23,7 @@ namespace ConsoleProject.CLI.Commands
             Line = $"queue {SubcommandArg} ...";
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, SubcommandArg.Name);
@@ -35,6 +35,9 @@ namespace ConsoleProject.CLI.Commands
                     break;
                 case "export":
                     ProcessExport(context);
+                    break;
+                case "import":
+                    ProcessImport(context);
                     break;
                 case "commit":
                     ProcessCommit(context);
@@ -98,6 +101,67 @@ namespace ConsoleProject.CLI.Commands
             }
         }
 
+        private void ProcessImport(List<string> context)
+        {
+            if (context.Count == 1)
+                throw new MissingArgumentException($"queue export {PathArg} {FormatArg}", 1, PathArg.Name);
+
+            var path = PathArg.Parse(context[1], true);
+
+            var format = "XML";
+            if (context.Count == 3)
+                format = FormatArg.Parse(context[2]);
+
+            else if (context.Count > 3)
+                throw new TooManyArgumentsException($"queue export {PathArg} {FormatArg}");
+
+            switch (format)
+            {
+                case "XML":
+                    DeserializeXML();
+                    break;
+                case "plaintext":
+                    DeserializePlain();
+                    break;
+            }
+
+            void DeserializeXML()
+            {
+                using var reader = XmlReader.Create(path);
+                var serializer = new XmlSerializer(typeof(CommandQueue));
+                CommandQueue qu = (CommandQueue) serializer.Deserialize(reader);
+
+                while(qu.Count > 0)
+                    _dispatcher.CommandQueue.Enqueue(qu.Dequeue());
+
+                Log.WriteLine($"§aCommand queue imported from `§l{path}§a` as XML");
+            }
+
+            void DeserializePlain()
+            {
+                using var reader = File.OpenText(path);
+                string input;
+                
+                while ((input = reader.ReadLine()) != null)
+                {
+                    try
+                    {
+                        _dispatcher.Parse(input.Trim(), reader, true);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Log.HandleException(ex);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Log.HandleException(ex);
+                    }
+                }
+
+                Log.WriteLine($"§aCommand queue imported from `§l{path}§a` as plaintext");
+            }
+        }
+
         private void ProcessCommit(List<string> context)
         {
             if (context.Count > 1)
@@ -111,12 +175,7 @@ namespace ConsoleProject.CLI.Commands
                 }
                 catch (ArgumentException ex)
                 {
-                    using ((TemporaryConsoleColor)ConsoleColor.DarkRed)
-                    {
-                        Log.WriteLine(ex.Message);
-                        if (ex.InnerException != null)
-                            Log.WriteLine($"Caused by: {ex.InnerException.Message}");
-                    }
+                    Log.HandleException(ex);
                 }
 
                 Log.WriteLine();

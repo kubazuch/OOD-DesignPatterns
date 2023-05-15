@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
@@ -13,7 +14,7 @@ namespace ConsoleProject.CLI.Commands
             Line = "exit";
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count > 0)
                 throw new TooManyArgumentsException(this);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -46,7 +47,7 @@ namespace ConsoleProject.CLI.Commands
             Line = other.Line;
         }
 
-        public override void Process(string line, List<string> context)
+        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
         {
             if (context.Count == 0)
                 throw new MissingArgumentException(this, 1, TypeArg.Name);
@@ -63,13 +64,17 @@ namespace ConsoleProject.CLI.Commands
             
             _builder = AbstractBuilder.GetByType(_collection.raw);
 
-            Log.WriteLine($"Creating new §l{_collection.raw}§r");
-            Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
+            if (!silent)
+            {
+                Log.WriteLine($"Creating new §l{_collection.raw}§r");
+                Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
+            }
 
             do
             {
-                Log.Write("§e+ ");
-                var cmd = Console.ReadLine().Trim();
+                if(!silent)
+                    Log.Write("§e+ ");
+                var cmd = source.ReadLine().Trim();
                 var match = Assignment.Match(cmd);
 
                 if (cmd == "")
@@ -85,19 +90,15 @@ namespace ConsoleProject.CLI.Commands
                     }
                     catch (ArgumentException ex)
                     {
-                        using ((TemporaryConsoleColor)ConsoleColor.DarkRed)
-                        {
-                            Log.WriteLine(ex.Message);
-                            if (ex.InnerException != null)
-                                Log.WriteLine($"Caused by: {ex.InnerException.Message}");
-                        }
+                        Log.HandleException(ex);
                     }
                 }
                 else if (cmd is "DONE")
                     break;
                 else if (cmd is "EXIT")
                 {
-                    Log.WriteLine($"§eCreation of {_collection.raw} terminated.");
+                    if (!silent)
+                        Log.WriteLine($"§eCreation of {_collection.raw} terminated.");
                     return;
                 }
                 else
@@ -107,7 +108,7 @@ namespace ConsoleProject.CLI.Commands
             } while (true);
 
             var sb = new StringBuilder();
-            sb.AppendLine(line);
+            sb.AppendLine(string.Join(' ', raw));
             sb.Append(_builder).AppendLine();
             sb.Append("DONE");
 
@@ -138,7 +139,44 @@ namespace ConsoleProject.CLI.Commands
 
         public override void ReadXml(XmlReader reader)
         {
-            throw new NotImplementedException();
+            reader.ReadStartElement("Type");
+            var type = reader.ReadContentAsString().RemoveQuotes();
+            reader.ReadEndElement();
+            _collection = (type, TypeArg.Parse(_data, type));
+
+            reader.ReadStartElement("Representation");
+            var repr = reader.ReadContentAsString().RemoveQuotes();
+            reader.ReadEndElement();
+            _factory = (repr, FactoryArg.Parse(repr));
+
+            _builder = AbstractBuilder.GetByType(_collection.raw);
+
+            var sb = new StringBuilder($"add {type} {repr}");
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                if (reader.IsStartElement())
+                {
+                    string elementName = reader.Name;
+                    reader.ReadStartElement();
+                    string fieldName = char.ToLower(elementName[0]) + elementName[1..];
+                    string fieldVal = reader.ReadContentAsString();
+
+                    ((IRefractive)_builder).SetValueByName(fieldName, fieldVal.RemoveQuotes());
+
+                    sb.Append($"\n{fieldName}=\"{fieldVal}\"");
+                    reader.ReadEndElement();
+                    reader.MoveToContent();
+                }
+                else
+                {
+                    reader.Read();
+                }
+            }
+
+            sb.Append("\nDONE");
+
+            Line = sb.ToString();
+            Cloned = true;
         }
 
         public override void WriteXml(XmlWriter writer)
