@@ -9,14 +9,12 @@ namespace ConsoleProject.CLI.Arguments
     {
         private readonly List<string> _keys;
 
-        public EnumArgument(IEnumerable<string> arguments, string name = null, bool required = false)
+        public EnumArgument(IEnumerable<string> arguments, bool required = false, string name = null) : base(name, required)
         {
-            this._keys = arguments.ToList();
-            this.Required = required;
-            this.Name = name;
+            _keys = arguments.ToList();
         }
 
-        public string Parse(string arg)
+        public override string Parse(string arg)
         {
             if (!_keys.Contains(arg))
                 throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _keys)}");
@@ -31,14 +29,12 @@ namespace ConsoleProject.CLI.Arguments
     {
         private readonly Dictionary<string, T> _dictionary;
 
-        public EnumArgument(Dictionary<string, T> dictionary, string name = null, bool required = false)
+        public EnumArgument(Dictionary<string, T> dictionary, bool required = false, string name = null) : base(name, required)
         {
-            this._dictionary = dictionary;
-            this.Required = required;
-            this.Name = name;
+            _dictionary = dictionary;
         }
 
-        public T Parse(string arg)
+        public override T Parse(string arg)
         {
             if (!_dictionary.TryGetValue(arg, out T value))
                 throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _dictionary.Keys)}");

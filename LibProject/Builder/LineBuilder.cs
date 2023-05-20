@@ -58,5 +58,7 @@ namespace BTM.Builder
             this.CommonName = commonName;
             return this;
         }
+
+        public override Entity Build(AbstractFactory abstractFactory) => abstractFactory.CreateLine(this);
     }
 }

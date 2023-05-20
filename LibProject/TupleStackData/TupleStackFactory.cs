@@ -5,6 +5,9 @@ namespace BTM.TupleStackData
 {
     public class TupleStackAbstractFactory : AbstractFactory
     {
+        public TupleStackAbstractFactory() : base("secondary")
+        { }
+
         public override Line CreateLine(LineBuilder builder)
         {
             return new TupleStackLineAdapter(new TupleStackLine(builder.NumberHex!, builder.NumberDec!.Value, builder.CommonName!,

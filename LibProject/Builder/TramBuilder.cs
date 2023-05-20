@@ -46,5 +46,7 @@ namespace BTM.Builder
             this.CarsNumber = number;
             return this;
         }
+
+        public override Entity Build(AbstractFactory abstractFactory) => abstractFactory.CreateTram(this);
     }
 }

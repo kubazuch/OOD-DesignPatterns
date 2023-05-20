@@ -1,92 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using BTM.Collections;
 using ConsoleProject.CLI.Arguments;
-using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {
-    public class ListCommand : QueueableCommand
+    public class ListCommand : Command
     {
-        private static readonly TypeArgument TypeArg = new (true);
+        private NamedCollection _collection;
 
-        private readonly DataManager _data;
+        public ListCommand() : base("list") {}
 
-        private (string raw, ICollection parsed) _collection;
-
-        public ListCommand() : base("", "") => throw new NotImplementedException();
-
-        public ListCommand(DataManager data) 
-            : base("list", "Prints objects matching certain conditions")
+        public ListCommand(NamedCollection collection)
+            : base("list")
         {
-            _data = data;
-            Line = $"{Name} {TypeArg}";
+            _collection = collection;
         }
 
-        private ListCommand(ListCommand other)
-            : base(other.Name, other.Description)
-        {
-            _data = other._data;
+        public override void Execute() => Algorithms.ForEach(_collection.GetForwardIterator(), Console.WriteLine);
 
-            Line = other.Line;
-        }
+        public override string ToCommandline() => $"{Name} {_collection.Name}";
 
-        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
-        {
-            if (context.Count == 0)
-                throw new MissingArgumentException(this, 1, TypeArg.Name);
-
-            _collection = (context[0], TypeArg.Parse(_data, context[0]));
-
-            if (context.Count > 1)
-                throw new TooManyArgumentsException(this);
-
-            Line = string.Join(' ', raw);
-            Cloned = true;
-        }
-
-        public override void Execute() => Algorithms.ForEach(_collection.parsed.GetForwardIterator(), Console.WriteLine);
-
-        public override object Clone() => new ListCommand(this);
-
-        public override string ToHumanReadableString()
+        public override string ToString()
         {
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
-            sb.Append("type=§e").Append(_collection.raw).Append("§r");
+            sb.Append("type=§e").Append(_collection.Name).Append("§r");
 
             return sb.ToString();
         }
 
         public override void ReadXml(XmlReader reader)
         {
-            reader.ReadStartElement("Type");
-            var type = reader.ReadContentAsString();
-            reader.ReadEndElement();
-            _collection = (type, TypeArg.Parse(_data, type));
-
-            Line = $"list {type}";
-            Cloned = true;
+            reader.MoveToAttribute("type");
+            var name = reader.GetAttribute("type")!;
+            _collection = new NamedCollection(name, App.Instance.DataManager.Mapping[name]);
         }
 
         public override void WriteXml(XmlWriter writer)
         {
-            writer.WriteStartElement("Type");
-            writer.WriteValue(_collection.raw);
-            writer.WriteEndElement();
-        }
-
-        public override void PrintHelp(List<string>? o)
-        {
-            base.PrintHelp();
-            if (o == null) return;
-
-            Log.WriteLine("\nUsage:");
-            Log.WriteLine($"\t§l{ToString()}");
-            Log.WriteLine($"\nPrints to the console all of the objects of class given by `§l{TypeArg.Name}§r`, where printing an object means listing all of its non reference fields.");
+            writer.WriteAttributeString("type", _collection.Name);
         }
     }
 }

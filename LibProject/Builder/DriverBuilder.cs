@@ -57,5 +57,7 @@ namespace BTM.Builder
             this.Seniority = seniority;
             return this;
         }
+
+        public override Entity Build(AbstractFactory abstractFactory) => abstractFactory.CreateDriver(this);
     }
 }

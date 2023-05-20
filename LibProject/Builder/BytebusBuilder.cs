@@ -45,5 +45,7 @@ namespace BTM.Builder
             this.EngineClass = engineClass;
             return this;
         }
+
+        public override Entity Build(AbstractFactory abstractFactory) => abstractFactory.CreateBytebus(this);
     }
 }

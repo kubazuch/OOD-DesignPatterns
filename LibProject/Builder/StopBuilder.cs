@@ -58,5 +58,7 @@ namespace BTM.Builder
             this.Type = type;
             return this;
         }
+
+        public override Entity Build(AbstractFactory abstractFactory) => abstractFactory.CreateStop(this);
     }
 }

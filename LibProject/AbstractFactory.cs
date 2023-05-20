@@ -1,23 +1,23 @@
 ﻿using BTM.Builder;
 using System;
 using System.Collections.Generic;
+using BTM.BaseData;
+using BTM.TupleStackData;
 
 namespace BTM
 {
     public abstract class AbstractFactory
     {
-        private readonly Dictionary<string, Func<AbstractBuilder, Entity>> _creators;
-
-        protected AbstractFactory()
+        public string Name { get; }
+        public static Dictionary<string, AbstractFactory> Mapping = new ()
         {
-            _creators = new Dictionary<string, Func<AbstractBuilder, Entity>>
-            {
-                ["line"] = builder => CreateLine((LineBuilder)builder),
-                ["driver"] = builder => CreateDriver((DriverBuilder)builder),
-                ["bytebus"] = builder => CreateBytebus((BytebusBuilder)builder),
-                ["stop"] = builder => CreateStop((StopBuilder)builder),
-                ["tram"] = builder => CreateTram((TramBuilder)builder),
-            };
+            ["base"] = new BaseAbstractFactory(),
+            ["secondary"] = new TupleStackAbstractFactory()
+        };
+
+        protected AbstractFactory(string name)
+        {
+            Name = name;
         }
 
         public abstract Line CreateLine(LineBuilder builder);
@@ -30,12 +30,6 @@ namespace BTM
 
         public abstract Tram CreateTram(TramBuilder builder);
 
-        public Entity CreateEntity(AbstractBuilder builder)
-        {
-            if (!_creators.TryGetValue(builder.BuilderName, out var value))
-                throw new ArgumentException($"Unknown entity type: {builder.BuilderName}. Possible types: {string.Join(", ", _creators.Keys)}");
-
-            return value(builder);
-        }
+        public Entity CreateEntity(AbstractBuilder builder) => builder.Build(this);
     }
 }

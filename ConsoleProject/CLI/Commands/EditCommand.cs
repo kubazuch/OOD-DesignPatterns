@@ -15,77 +15,55 @@ using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {
-    public class EditCommand : QueueableCommand
+    public class EditCommand : Command
     {
-        private static readonly TypeArgument TypeArg = new(true);
-        private static readonly PredicateArgument PredicateArg = new(true);
-        public static readonly Regex Assignment = new(@"^([^=]+?)\s*?=\s*?(?:([^""\s]+)|""([^""]+)"")", RegexOptions.Compiled);
+        private NamedCollection _collection;
+        private List<EntityPredicate> _predicates;
+        private AbstractBuilder _builder;
 
-        private readonly DataManager _data;
+        private Predicate<object> _predicate;
 
-        private (string raw, ICollection parsed) _collection;
-        private (List<string> raw, Predicate<object> parsed) _predicate;
-        private AbstractBuilder? _builder;
+        public EditCommand() : base("edit") {}
 
-        public EditCommand() : base("", "") => throw new NotImplementedException();
-
-        public EditCommand(DataManager data)
-            : base("edit", "Edits values of a given record")
+        public EditCommand(NamedCollection collection, List<EntityPredicate> predicates, AbstractBuilder builder) : base("edit")
         {
-            _data = data;
+            _collection = collection;
+            _predicates = predicates;
+            _builder = builder;
 
-            var sb = new StringBuilder();
-            sb.Append(Name).Append(' ').Append(TypeArg).Append(" [").Append(PredicateArg).Append(" ...]");
-            Line = sb.ToString();
+            _predicate = entity => _predicates.All(pred => pred.Predicate((Entity)entity));
         }
 
-        private EditCommand(EditCommand other)
-            : base(other.Name, other.Description)
+        public static Command? EditCall(List<object?> args, TextReader reader, bool verbose)
         {
-            _data = other._data;
+            var collection = (NamedCollection)args[0]!;
+            var builder = AbstractBuilder.GetByType(collection.Name, false);
+            var predicates = args.Skip(1).Select(x => (EntityPredicate)x!).ToList();
 
-            Line = other.Line;
-        }
-
-        public override void Process(List<string> raw, List<string> context, TextReader source, bool silent = false)
-        {
-            if (context.Count == 0)
-                throw new MissingArgumentException(this, 1, TypeArg.Name);
-
-            _collection = (context[0], TypeArg.Parse(_data, context[0]));
-            _builder = AbstractBuilder.GetByType(_collection.raw, false);
-
-            List<Predicate<Entity>> predicates = new List<Predicate<Entity>>();
-            for (int i = 1; i < context.Count; ++i)
+            if (verbose)
             {
-                predicates.Add(PredicateArg.Parse(context[0], context[i]));
-            }
-
-            _predicate = (raw.Skip(2).ToList(), entity => predicates.All(predicate => predicate((Entity)entity)));
-            
-            if(!silent)
-            {
-                Log.WriteLine($"Editing §l{_collection.raw}§r");
-                Log.WriteLine($"§3Available fields: §l{string.Join(", ", _builder.Fields.Keys)}");
+                Log.WriteLine($"Editing new §l{collection.Name}§r");
+                Log.WriteLine($"§3Available fields: §l{string.Join(", ", builder.Fields.Keys)}");
             }
 
             do
             {
-                if (!silent)
+                if (verbose)
                     Log.Write("§e+ ");
-                var cmd = source.ReadLine().Trim();
-                var match = Assignment.Match(cmd);
 
+                var cmd = reader.ReadLine().Trim();
                 if (cmd == "")
                     continue;
-                else if (match.Success)
+
+                var match = App.Assignment.Match(cmd);
+                if (match.Success)
                 {
                     var field = match.Groups[1].Value;
                     var val = match.Groups[2].Success ? match.Groups[2].Value : match.Groups[3].Value;
 
                     try
                     {
-                        ((IRefractive)_builder).SetValueByName(field, val);
+                        ((IRefractive)builder)[field] = val;
                     }
                     catch (ArgumentException ex)
                     {
@@ -96,88 +74,87 @@ namespace ConsoleProject.CLI.Commands
                     break;
                 else if (cmd is "EXIT")
                 {
-                    if (!silent)
-                        Log.WriteLine($"§eEdition of {_collection.raw} terminated.");
-                    return;
+                    if (verbose)
+                        Log.WriteLine($"§eEdition of {collection.Name} terminated.");
+                    return null;
                 }
                 else
                 {
-                    Log.WriteLine($"§4Unknown subcommand: `§l{cmd}§4`. Possible subcommands: §cEXIT, DONE and assigmnents of form: field=value");
+                    Log.WriteLine($"§4Unknown subcommand: `§l{cmd}§4`. Possible subcommands: §cEXIT, DONE and assignments of form: field=value");
                 }
             } while (true);
 
-            var sb = new StringBuilder();
-            sb.AppendLine(string.Join(' ', raw));
-            sb.Append(_builder).AppendLine();
-            sb.Append("DONE");
-
-            Line = sb.ToString();
-            Cloned = true;
+            return new EditCommand(collection, predicates, builder);
         }
 
         public override void Execute()
         {
             Entity? entity = null;
             int count = 0;
-            var iterator = _collection.parsed.GetForwardIterator();
+            var iterator = _collection.GetForwardIterator();
             while (iterator.MoveNext())
             {
-                if (!_predicate.parsed(iterator.Current)) continue;
+                if (!_predicate(iterator.Current)) continue;
                 count++;
-                entity ??= (Entity) iterator.Current;
+                entity ??= (Entity)iterator.Current;
             }
-            
+
             if (count != 1)
-                throw new ArgumentException($"Predicate `§l{string.Join("§r and §l", _predicate.raw)}§r` should specify one record uniquely, found: §l{count}");
+                throw new ArgumentException($"Predicate `§l{string.Join("§l and §l", _predicates)}§l` should specify one record uniquely, found: §l{count}");
 
-            foreach (var kvp in _builder.Fields)
+            foreach (var field in _builder.Fields.Values.Where(field => field.Value != null))
             {
-                var field = kvp.Value;
-                if(field.Value == null) continue;
-
-                ((IRefractive) entity!).SetValueByName(field.Name, field.Value);
+                ((IRefractive)entity!)[field.Name] = field.Value;
             }
 
-            Log.WriteLine($"§aEdited §l{_collection.raw}§a:");
+            Log.WriteLine($"§aEdited §l{_collection.Name}§a:");
             Log.WriteLine(entity.ToString());
         }
 
-        public override string ToHumanReadableString()
+        public override string ToString()
         {
             var sb = new StringBuilder();
             sb.Append("§6").Append(Name).Append("§r").Append(':').AppendLine();
-            sb.Append("type=§e").AppendLine(_collection.raw);
-            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicate.raw)).AppendLine("§r");
-            sb.Append(_builder.ToString(true));
+            sb.Append("type=§e").AppendLine(_collection.Name);
+            sb.Append("§rpredicate=§e").Append(string.Join("§r and §e", _predicates)).AppendLine("§r");
+            foreach (var field in _builder.Fields.Where(field => field.Value.Value != null))
+            {
+                sb.Append(field.Key).Append("=§e").Append(field.Value.Value.ToString()!.Enquote()).AppendLine("§r");
+            }
 
-            return sb.ToString();
+            return sb.ToString().TrimEnd();
         }
 
         public override void ReadXml(XmlReader reader)
         {
-            reader.ReadStartElement("Type");
-            var type = reader.ReadContentAsString().RemoveQuotes();
-            reader.ReadEndElement();
-            _collection = (type, TypeArg.Parse(_data, type));
-            _builder = AbstractBuilder.GetByType(_collection.raw, false);
+            bool empty = reader.IsEmptyElement;
+            reader.MoveToAttribute("type");
+            var name = reader.GetAttribute("type")!;
+            _collection = new NamedCollection(name, App.Instance.DataManager.Mapping[name]);
+            _builder = AbstractBuilder.GetByType(_collection.Name, false);
+            reader.Read();
 
-            List<Predicate<Entity>> predicates = new List<Predicate<Entity>>();
-            List<string> raw = new List<string>();
+            _predicates = new List<EntityPredicate>();
+            if (empty)
+            {
+                _predicate = entity => _predicates.All(pred => pred.Predicate((Entity)entity));
+                return;
+            }
+
+            reader.Read();
             while (reader.IsStartElement() && reader.Name == "Predicate")
             {
+                var field = reader.GetAttribute("field")!;
+                var cmp = reader.GetAttribute("comparison")!;
                 reader.ReadStartElement();
                 string pred = reader.ReadContentAsString();
 
-                predicates.Add(PredicateArg.Parse(type, pred.RemoveQuotes()));
-                raw.Add(pred);
+                _predicates.Add(new EntityPredicate(_collection.Name, field, cmp, pred));
 
                 reader.ReadEndElement();
                 reader.MoveToContent();
             }
 
-            _predicate = (raw, entity => predicates.All(predicate => predicate((Entity)entity)));
-
-            var sb = new StringBuilder($"edit {type} {string.Join(' ', raw)}");
             while (reader.NodeType != XmlNodeType.EndElement)
             {
                 if (reader.IsStartElement())
@@ -187,9 +164,8 @@ namespace ConsoleProject.CLI.Commands
                     string fieldName = char.ToLower(elementName[0]) + elementName[1..];
                     string fieldVal = reader.ReadContentAsString();
 
-                    ((IRefractive)_builder).SetValueByName(fieldName, fieldVal.RemoveQuotes());
+                    ((IRefractive)_builder)[fieldName] = fieldVal.RemoveQuotes();
 
-                    sb.Append($"\n{fieldName}=\"{fieldVal}\"");
                     reader.ReadEndElement();
                     reader.MoveToContent();
                 }
@@ -199,58 +175,36 @@ namespace ConsoleProject.CLI.Commands
                 }
             }
 
-            sb.Append("\nDONE");
-
-            Line = sb.ToString();
-            Cloned = true;
+            _predicate = entity => _predicates.All(pred => pred.Predicate((Entity)entity));
         }
 
         public override void WriteXml(XmlWriter writer)
         {
-            writer.WriteStartElement("Type");
-            writer.WriteValue(_collection.raw);
-            writer.WriteEndElement();
+            writer.WriteAttributeString("type", _collection.Name);
 
-            foreach (var predicate in _predicate.raw)
+            foreach (var predicate in _predicates)
             {
                 writer.WriteStartElement("Predicate");
-                writer.WriteValue(predicate);
+                predicate.WriteXml(writer);
                 writer.WriteEndElement();
             }
 
-            foreach (var field in _builder.Fields)
+            foreach (var field in _builder.Fields.Where(field => field.Value.Value != null))
             {
-                if (field.Value.Value == null) continue;
                 writer.WriteStartElement(char.ToUpper(field.Key[0]) + field.Key[1..]);
                 writer.WriteValue(field.Value.Value);
                 writer.WriteEndElement();
             }
         }
 
-        public override object Clone() => new EditCommand(this);
-
-        public override void PrintHelp(List<string>? o)
+        public override string ToCommandline()
         {
-            base.PrintHelp();
-            if (o == null) return;
+            var sb = new StringBuilder();
+            sb.Append(Name).Append(' ').Append(_collection.Name).Append(' ').AppendLine(string.Join(' ', _predicates));
+            sb.AppendLine(_builder.ToString());
+            sb.Append("DONE");
 
-            Log.WriteLine("\nUsage:");
-            Log.WriteLine($"\t§l{ToString()}");
-            Log.WriteLine($"\nwhere requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:");
-            Log.WriteLine("\n\t§l<name_of_field>=|<|><value>");
-            Log.WriteLine("\nwhere `§l=|<|>§r` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `§l=§r` is allowed. If a value were to contain spaces it should be placed inside quotation marks.");
-            Log.WriteLine("\nThis command allows editing a given record if requirement conditions specify §lone record uniquely§r.");
-            Log.WriteLine("\nAfter receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. " +
-                          "The program waits for further instructions from the user describing the values of the fields of the object that is supposed to be edited with the §ledit§r command. " +
-                          "The format for each line is as follows:");
-            Log.WriteLine("\n\t§l<name_of_field>=<value>");
-            Log.WriteLine(
-                "\nA line like that means that the value of the field `§lname_of_field§r` for the edited object will be equal to `§lvalue§r`. " +
-                "The user can enter however many lines they want in such a format (even repeating the fields that they have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:");
-            Log.WriteLine("\n\t§lDONE§r or §lEXIT");
-            Log.WriteLine("\nAfter receiving the §lDONE§r command the edition process finishes and the program schedules the edit into the queue. " +
-                          "After receiving the §lEXIT§r command the edition process also finishes but no edits are done. " +
-                          "The data provided by the user is also discarded.");
+            return sb.ToString();
         }
     }
 }

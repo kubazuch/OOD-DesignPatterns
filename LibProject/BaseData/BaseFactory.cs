@@ -4,6 +4,9 @@ namespace BTM.BaseData
 {
     public class BaseAbstractFactory : AbstractFactory
     {
+        public BaseAbstractFactory() : base("base")
+        {}
+
         public override Line CreateLine(LineBuilder builder)
         {
             return new BaseLine(builder.NumberHex!, builder.NumberDec!.Value, builder.CommonName!);

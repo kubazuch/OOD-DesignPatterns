@@ -5,6 +5,10 @@ namespace BTM.TextData
 {
     public class TextAbstractFactory : AbstractFactory
     {
+        public TextAbstractFactory() : base("text")
+        {
+        }
+
         public override Line CreateLine(LineBuilder builder)
         {
             return new TextLineAdapter(new TextLine(builder.NumberHex!, builder.NumberDec!.Value, builder.CommonName!,

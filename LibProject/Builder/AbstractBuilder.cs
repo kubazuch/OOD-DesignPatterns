@@ -36,19 +36,18 @@ namespace BTM.Builder
 
             return value(init);
         }
-
-        public override string ToString() => ToString(false);
-
-        public string ToString(bool color)
+        
+        public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var field in Fields)
+            foreach (var field in Fields.Where(field => field.Value.Value != null))
             {
-                if(field.Value.Value == null) continue;
-                sb.Append(field.Key).Append(color ? "=§e\"" : "=\"").Append(field.Value.Value).AppendLine(color ? "\"§r" : "\"");
+                sb.Append(field.Key).Append('=').Append(field.Value.Value.ToString()!.Enquote()).AppendLine();
             }
+
             return sb.ToString().TrimEnd();
         }
 
+        public abstract Entity Build(AbstractFactory abstractFactory);
     }
 }
