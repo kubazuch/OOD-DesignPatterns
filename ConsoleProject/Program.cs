@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using ConsoleProject.CLI;
-
-namespace ConsoleProject
+﻿namespace ConsoleProject
 {
     internal class Program
     {

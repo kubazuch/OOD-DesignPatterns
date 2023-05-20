@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using ConsoleProject.CLI.Arguments;
-using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {

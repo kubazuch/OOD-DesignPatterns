@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace BTM.TupleStackData
@@ -21,65 +20,20 @@ namespace BTM.TupleStackData
 
         public override string Name
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("name"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("name"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["name"];
+            set => _adaptee["name"] = value;
         }
 
         public override string Surname
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("surname"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("surname"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["surname"];
+            set => _adaptee["surname"] = value;
         }
 
         public override int Seniority
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("seniority"));
-
-                return int.Parse(fromStack[i + 2]);
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("seniority"));
-
-                fromStack[i + 2] = value.ToString();
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => int.Parse(_adaptee["seniority"]);
+            set => _adaptee["engineClass"] = value.ToString();
         }
 
         public TupleStackDriverAdapter(TupleStackDriver adaptee)

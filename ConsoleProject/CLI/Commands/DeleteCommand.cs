@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using BTM;
-using BTM.Collections;
 using ConsoleProject.CLI.Arguments;
-using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {

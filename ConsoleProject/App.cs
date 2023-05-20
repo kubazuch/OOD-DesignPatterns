@@ -1,14 +1,9 @@
 ﻿using ConsoleProject.CLI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BTM;
-using BTM.BaseData;
-using BTM.Builder;
-using BTM.Refraction;
-using BTM.TupleStackData;
 using ConsoleProject.CLI.Arguments;
 using ConsoleProject.CLI.Commands;
 using ConsoleProject.CLI.Exception;

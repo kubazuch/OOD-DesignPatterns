@@ -26,44 +26,14 @@ namespace BTM.TupleStackData
         }
         public override string Name
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("name"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("name"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["name"];
+            set => _adaptee["name"] = value;
         }
 
         public override string Type
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("type"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("type"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["type"];
+            set => _adaptee["type"] = value;
         }
 
         public TupleStackStopAdapter(TupleStackStop adaptee)

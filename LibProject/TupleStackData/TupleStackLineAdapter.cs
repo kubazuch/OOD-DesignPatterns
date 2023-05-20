@@ -10,23 +10,8 @@ namespace BTM.TupleStackData
 
         public override string NumberHex
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("numberHex"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("numberHex"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["numberHex"];
+            set => _adaptee["numberHex"] = value;
         }
 
         public override int NumberDec
@@ -37,23 +22,8 @@ namespace BTM.TupleStackData
 
         public override string CommonName
         {
-            get
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("commonName"));
-
-                return fromStack[i + 2];
-            }
-            set
-            {
-                List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
-                int i = fromStack.FindIndex(x => x.Equals("commonName"));
-
-                fromStack[i + 2] = value;
-                fromStack.Reverse();
-
-                _adaptee.TupleRepr = Tuple.Create(_adaptee.TupleRepr.Item1, new Stack<string>(fromStack));
-            }
+            get => _adaptee["commonName"];
+            set => _adaptee["commonName"] = value;
         }
 
         public override List<Stop> Stops

@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using BTM;
 using BTM.Builder;
-using BTM.Collections;
 using BTM.Refraction;
 using ConsoleProject.CLI.Arguments;
-using ConsoleProject.CLI.Exception;
 
 namespace ConsoleProject.CLI.Commands
 {
