@@ -17,7 +17,11 @@ namespace BTM.TupleStackData
         public override int NumberDec
         {
             get => _adaptee.TupleRepr.Item1;
-            set => _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            set
+            {
+                ChangeId(value);
+                _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            }
         }
 
         public override string CommonName
@@ -33,7 +37,14 @@ namespace BTM.TupleStackData
                 List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("stops"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Stops[int.Parse(id)]).ToList();
+                try
+                {
+                    return fromStack.GetRange(i + 2, cnt).Select(id => Vault.Stops[int.Parse(id)]).ToList();
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new ArgumentException("Reference to nonexistent Stop", ex);
+                }
             }
         }
 
@@ -44,15 +55,28 @@ namespace BTM.TupleStackData
                 List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("vehicles"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Vehicles[int.Parse(id)]).ToList();
+                try
+                {
+                    return fromStack.GetRange(i + 2, cnt).Select(id => Vault.Vehicles[int.Parse(id)]).ToList();
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new ArgumentException("Reference to nonexistent Vehicle", ex);
+                }
             }
         }
 
         public TupleStackLineAdapter(TupleStackLine adaptee)
         {
             this._adaptee = adaptee;
+        }
 
-            TupleStackRepresentation.Lines.Add(NumberDec, this);
+        public override void OnStopDeleted(Stop stop)
+        {
+        }
+
+        public override void OnVehicleDeleted(Vehicle vehicle)
+        {
         }
     }
 }

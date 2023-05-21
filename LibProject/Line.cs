@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BTM.Refraction;
@@ -7,13 +8,15 @@ namespace BTM
 {
     public abstract class Line : Entity
     {
+        public event Action<Line>? LineDeleted; 
+
         public new static readonly Dictionary<string, IField> AvailableFields = new List<IField>
         {
             new Field<string>("numberHex"), new Field<int>("numberDec"), new Field<string>("commonName")
         }.ToDictionary(f => f.Name, f => f);
 
         public abstract string NumberHex { get; set; }
-        public abstract int NumberDec { get; set; }
+        public abstract int NumberDec { get; set;  }
         public abstract string CommonName { get; set; }
         public abstract List<Stop> Stops { get; }
         public abstract List<Vehicle> Vehicles { get; }
@@ -23,6 +26,23 @@ namespace BTM
         {
             AssignSettersAndGetters();
         }
+
+        protected void ChangeId(int value)
+        {
+            if (Vault == null)
+                return;
+
+            if (Vault.Lines.ContainsKey(value))
+                throw new ArgumentException($"DataVault already contains Line with id {value}");
+
+            Vault.Lines.Remove(NumberDec);
+            Vault.Lines.Add(value, this);
+        }
+
+        public override void SetVault(DataVault vault) => vault.Register(this);
+
+        public abstract void OnStopDeleted(Stop stop);
+        public abstract void OnVehicleDeleted(Vehicle vehicle);
 
         public sealed override void AssignSettersAndGetters()
         {
@@ -48,5 +68,6 @@ namespace BTM
             return builder.ToString();
         }
 
+        public override void Dispose() => LineDeleted?.Invoke(this);
     }
 }

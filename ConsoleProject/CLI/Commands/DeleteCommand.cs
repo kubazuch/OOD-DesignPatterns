@@ -41,8 +41,9 @@ namespace ConsoleProject.CLI.Commands
 
             _collection.Delete(entity);
 
-            Log.WriteLine($"§aRemoved §l{_collection.Name}§a:");
-            Log.WriteLine(entity.ToString());
+            Log.WriteLine($"§aRemoved §l{_collection.Name}§a");
+
+            entity.Dispose();
         }
 
         public override string ToString()

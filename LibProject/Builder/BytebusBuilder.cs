@@ -19,6 +19,7 @@ namespace BTM.Builder
             AssignSettersAndGetters();
 
             if (!init) return;
+
             Id = 0;
             EngineClass = "Byte5";
         }

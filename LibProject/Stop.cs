@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BTM.Refraction;
@@ -7,6 +8,8 @@ namespace BTM
 {
     public abstract class Stop : Entity
     {
+        public event Action<Stop>? StopDeleted; 
+
         public new static readonly Dictionary<string, IField> AvailableFields = new List<IField>
         {
             new Field<int>("id"), new Field<string>("name"), new Field<string>("type")
@@ -22,6 +25,22 @@ namespace BTM
         {
             AssignSettersAndGetters();
         }
+
+        protected void ChangeId(int value)
+        {
+            if (Vault == null)
+                return;
+
+            if (Vault.Stops.ContainsKey(value))
+                throw new ArgumentException($"DataVault already contains Stop with id {value}");
+
+            Vault.Stops.Remove(Id);
+            Vault.Stops.Add(value, this);
+        }
+
+        public override void SetVault(DataVault vault) => vault.Register(this);
+
+        public abstract void OnLineDeleted(Line line);
 
         public sealed override void AssignSettersAndGetters()
         {
@@ -45,5 +64,7 @@ namespace BTM
             builder.Append("\tLines: [").AppendJoin(", ", Lines.Select(x => x.NumberDec)).Append("]");
             return builder.ToString();
         }
+
+        public override void Dispose() => StopDeleted?.Invoke(this);
     }
 }

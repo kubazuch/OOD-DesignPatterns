@@ -14,7 +14,7 @@ namespace BTM.BaseData
 
         public override Driver CreateDriver(DriverBuilder builder)
         {
-            return new BaseDriver(builder.Name!, builder.Surname!, builder.Seniority!.Value);
+            return new BaseDriver(builder.Id!.Value, builder.Name!, builder.Surname!, builder.Seniority!.Value);
         }
 
         public override Bytebus CreateBytebus(BytebusBuilder builder)

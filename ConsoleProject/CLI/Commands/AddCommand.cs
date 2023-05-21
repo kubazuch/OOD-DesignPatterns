@@ -82,6 +82,7 @@ namespace ConsoleProject.CLI.Commands
         public override void Execute()
         {
             Entity created = _factory.CreateEntity(_builder!);
+            created.SetVault(App.Instance.DataManager.Vault);
             _collection.Add(created);
             Log.WriteLine($"§aCreated new §l{_collection.Name}§a:");
             Log.WriteLine(created.ToString());

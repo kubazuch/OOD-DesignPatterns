@@ -11,7 +11,11 @@ namespace BTM.TupleStackData
         public override int Id
         {
             get => _adaptee.TupleRepr.Item1;
-            set => _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            set
+            {
+                ChangeId(value);
+                _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            }
         }
 
         public override List<Line> Lines
@@ -21,7 +25,14 @@ namespace BTM.TupleStackData
                 List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("lines"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Lines[int.Parse(id)]).ToList();
+                try
+                {
+                    return fromStack.GetRange(i + 2, cnt).Select(id => Vault.Lines[int.Parse(id)]).ToList();
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new ArgumentException("Reference to nonexistent Line", ex);
+                }
             }
         }
 
@@ -34,9 +45,10 @@ namespace BTM.TupleStackData
         public TupleStackBytebusAdapter(TupleStackBytebus adaptee)
         {
             this._adaptee = adaptee;
+        }
 
-            TupleStackRepresentation.Bytebuses.Add(Id, this);
-            TupleStackRepresentation.Vehicles.Add(Id, this);
+        public override void OnLineDeleted(Line line)
+        {
         }
     }
 }

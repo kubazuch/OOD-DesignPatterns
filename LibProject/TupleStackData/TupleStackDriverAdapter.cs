@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BTM.TupleStackData
@@ -7,6 +8,16 @@ namespace BTM.TupleStackData
     {
         private readonly TupleStackDriver _adaptee;
 
+        public override int Id
+        {
+            get => _adaptee.TupleRepr.Item1;
+            set
+            {
+                ChangeId(value);
+                _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            }
+        }
+
         public override List<Vehicle> Vehicles
         {
             get
@@ -14,7 +25,14 @@ namespace BTM.TupleStackData
                 List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("vehicles"));
                 int cnt = int.Parse(fromStack[i + 1]);
-                return fromStack.GetRange(i + 2, cnt).Select(id => TupleStackRepresentation.Vehicles[int.Parse(id)]).ToList();
+                try
+                {
+                    return fromStack.GetRange(i + 2, cnt).Select(id => Vault.Vehicles[int.Parse(id)]).ToList();
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new ArgumentException("Reference to nonexistent Vehicle", ex);
+                }
             }
         }
 
@@ -39,8 +57,10 @@ namespace BTM.TupleStackData
         public TupleStackDriverAdapter(TupleStackDriver adaptee)
         {
             this._adaptee = adaptee;
+        }
 
-            TupleStackRepresentation.Drivers.Add(adaptee.TupleRepr.Item1, this);
+        public override void OnVehicleDeleted(Vehicle vehicle)
+        {
         }
     }
 }

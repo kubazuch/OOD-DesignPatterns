@@ -1,10 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BTM.BaseData
 {
     public sealed class BaseStop : Stop
     {
-        public override int Id { get; set; }
+        private int _id;
+        public override int Id
+        {
+            get => _id;
+            set
+            {
+                ChangeId(value);
+                _id = value;
+            }
+        }
+
         public override List<Line> Lines { get; }
         public override string Name { get; set; }
         public override string Type { get; set; }
@@ -26,6 +37,25 @@ namespace BTM.BaseData
         {
             Lines.Add(line);
             line.Stops.Add(this);
+
+            StopDeleted += line.OnStopDeleted;
+            line.LineDeleted += OnLineDeleted;
+        }
+
+        public override void OnLineDeleted(Line line)
+        {
+            Lines.Remove(line);
+            line.LineDeleted -= OnLineDeleted;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            foreach (var line in Lines)
+                line.LineDeleted -= OnLineDeleted;
+
+            Lines.Clear();
         }
     }
 }

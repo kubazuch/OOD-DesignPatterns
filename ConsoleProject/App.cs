@@ -18,8 +18,7 @@ namespace ConsoleProject
         private bool _isRunning;
 
         private readonly CommandDispatcher _commandDispatcher;
-
-        public CommandDispatcher CommandDispatcher => _commandDispatcher;
+        
         public DataManager DataManager { get; }
 
         private App(DataRepresentation representation)
@@ -27,13 +26,73 @@ namespace ConsoleProject
             DataManager = new DataManager(representation);
             _commandDispatcher = new CommandDispatcher();
 
+            RegisterCommands();
+        }
+
+        public void Start()
+        {
+            _isRunning = true;
+            Log.WriteLine("Byteasar Urban Transport information system");
+            Log.WriteLine("\nType \"help\" for help");
+            Run();
+        }
+        public void Stop()
+        {
+            Log.WriteLine("Exiting!");
+            _isRunning = false;
+        }
+
+        private void Run()
+        {
+            while (_isRunning)
+            {
+                Log.Write("§e> ");
+                string input = Console.ReadLine();
+                try
+                {
+                    _commandDispatcher.Parse(input.Trim(), Console.In, true);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Log.HandleException(ex);
+                }
+                catch (ArgumentException ex)
+                {
+                    Log.HandleException(ex);
+                }
+
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            }
+        }
+
+        private List<object?> PredicateParser(CommandParser self, List<string> context)
+        {
+            var collectionArg = (TypeArgument)self.Args[0];
+            var predicateArg = (PredicateArgument)self.Vararg!;
+
+            var ret = new List<object?>();
+            if (context.Count == 0)
+                throw new MissingArgumentException(self, 1, collectionArg.Name);
+
+            ret.Add(self.Args[0].Parse(context[0]));
+
+            for (int i = 1; i < context.Count; ++i)
+            {
+                ret.Add(predicateArg.Parse(context[0], context[i]));
+            }
+
+            return ret;
+        }
+
+        private void RegisterCommands()
+        {
             _commandDispatcher.Register(CommandParser.New("exit", "Closes the application")
                 .Calls((_, _, _) => Stop()));
 
             _commandDispatcher.Register(CommandParser.New("list", "Prints all objects of a particular type")
                 .WithUsageDetails("Prints to the console all of the objects of class given by `§lname_of_the_class§l`, where printing an object means listing all of its non reference fields.")
                 .WithArg(new TypeArgument(DataManager, true))
-                .Calls((args, _, _) => new ListCommand((NamedCollection) args[0]!)));
+                .Calls((args, _, _) => new ListCommand((NamedCollection)args[0]!)));
 
             _commandDispatcher.Register(CommandParser.New("find", "Prints objects matching certain conditions")
                 .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t§l<name_of_field>=|<|><value>§l\n" +
@@ -42,8 +101,8 @@ namespace ConsoleProject
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithVararg(new PredicateArgument(true))
                 .WithParser(PredicateParser)
-                .Calls((args, _, _) => new FindCommand((NamedCollection) args[0]!,
-                    args.Skip(1).Select(x => (EntityPredicate) x!).ToList())));
+                .Calls((args, _, _) => new FindCommand((NamedCollection)args[0]!,
+                    args.Skip(1).Select(x => (EntityPredicate)x!).ToList())));
 
             _commandDispatcher.Register(CommandParser.New("add", "Adds a new object of a particular type")
                 .WithUsageDetails("\nwhere `§lbase|secondary§l` defines the §lrepresentation§l in which the object should be created. After receiving the first line the program presents the user with names of all " +
@@ -56,7 +115,7 @@ namespace ConsoleProject
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithArg(new EnumArgument<AbstractFactory>(AbstractFactory.Mapping, true, "representation"))
                 .Calls(AddCommand.AddCall));
-            
+
             _commandDispatcher.Register(CommandParser.New("queue", "Command queue commands")
                 .WithSubcommand(CommandParser.New("print", "Prints all commands currently stored in the queue")
                     .WithUsageDetails("Prints the name of each commandTodo stored in the queue along with all of its parameters in a human-readable form.")
@@ -64,7 +123,7 @@ namespace ConsoleProject
                 .WithSubcommand(CommandParser.New("export", "Exports all commands currently stored in the queue to the specified file")
                     .WithUsageDetails("Saves all commands from the queue to the file. There are supported two formats `XML`(default) and `plaintext`. The structure of XML should contain only necessary fields. The plain text format should be the same as it is in the commandTodo line – that means that pasting the content of the file to the console should add stored commands.")
                     .WithArg(new PathArgument(true))
-                    .WithArg(new EnumArgument(new List<string>{"XML", "plaintext"}, false, "format"))
+                    .WithArg(new EnumArgument(new List<string> { "XML", "plaintext" }, false, "format"))
                     .Calls((args, _, _) => QueueCommand.ExportCall(_commandDispatcher, args)))
                 .WithSubcommand(CommandParser.New("commit", "Executes all commands from the queue")
                     .WithUsageDetails("Executes all commands stored in the queue in order of their addition. After that queue is empty.")
@@ -99,59 +158,6 @@ namespace ConsoleProject
                 .WithParser(PredicateParser)
                 .Calls((args, _, _) => new DeleteCommand((NamedCollection)args[0]!,
                     args.Skip(1).Select(x => (EntityPredicate)x!).ToList())));
-        }
-
-        public void Start()
-        {
-            _isRunning = true;
-            Log.WriteLine("Byteasar Urban Transport information system");
-            Log.WriteLine("\nType \"help\" for help");
-            Run();
-        }
-        public void Stop()
-        {
-            Log.WriteLine("Exiting!");
-            _isRunning = false;
-        }
-
-        private void Run()
-        {
-            while (_isRunning)
-            {
-                Log.Write("§e> ");
-                string input = Console.ReadLine();
-                try
-                {
-                    _commandDispatcher.Parse(input.Trim(), Console.In, true);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    Log.HandleException(ex);
-                }
-                catch (ArgumentException ex)
-                {
-                    Log.HandleException(ex);
-                }
-            }
-        }
-
-        private List<object?> PredicateParser(CommandParser self, List<string> context)
-        {
-            var collectionArg = (TypeArgument)self.Args[0];
-            var predicateArg = (PredicateArgument)self.Vararg!;
-
-            var ret = new List<object?>();
-            if (context.Count == 0)
-                throw new MissingArgumentException(self, 1, collectionArg.Name);
-
-            ret.Add(self.Args[0].Parse(context[0]));
-
-            for (int i = 1; i < context.Count; ++i)
-            {
-                ret.Add(predicateArg.Parse(context[0], context[i]));
-            }
-
-            return ret;
         }
     }
 }

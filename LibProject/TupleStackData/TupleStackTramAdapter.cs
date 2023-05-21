@@ -11,7 +11,11 @@ namespace BTM.TupleStackData
         public override int Id
         {
             get => _adaptee.TupleRepr.Item1;
-            set => _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            set
+            {
+                ChangeId(value);
+                _adaptee.TupleRepr = Tuple.Create(value, _adaptee.TupleRepr.Item2);
+            }
         }
 
         public override int CarsNumber
@@ -20,23 +24,31 @@ namespace BTM.TupleStackData
             set => _adaptee["carsNumber"] = value.ToString();
         }
 
-        public override Line Line
+        public override Line? Line
         {
             get
             {
                 List<string> fromStack = _adaptee.TupleRepr.Item2.ToList();
                 int i = fromStack.FindIndex(x => x.Equals("line"));
-
-                return TupleStackRepresentation.Lines[int.Parse(fromStack[i + 2])];
+                try
+                {
+                    return Vault.Lines[int.Parse(fromStack[i + 2])];
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new ArgumentException("Reference to nonexistent Line", ex);
+                }
             }
+            protected set => _adaptee["line"] = (value?.NumberDec ?? -1).ToString();
         }
 
         public TupleStackTramAdapter(TupleStackTram adaptee)
         {
             this._adaptee = adaptee;
+        }
 
-            TupleStackRepresentation.Trams.Add(adaptee.TupleRepr.Item1, this);
-            TupleStackRepresentation.Vehicles.Add(adaptee.TupleRepr.Item1, this);
+        public override void OnLineDeleted(Line line)
+        {
         }
     }
 }

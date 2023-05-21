@@ -5,7 +5,7 @@ namespace BTM.TupleStackData
 {
     public class TupleStackAbstractFactory : AbstractFactory
     {
-        public TupleStackAbstractFactory() : base("secondary")
+        public TupleStackAbstractFactory() : base("base")
         { }
 
         public override Line CreateLine(LineBuilder builder)
@@ -16,7 +16,7 @@ namespace BTM.TupleStackData
 
         public override Driver CreateDriver(DriverBuilder builder)
         {
-            return new TupleStackDriverAdapter(new TupleStackDriver(builder.Name!, builder.Surname!, builder.Seniority!.Value));
+            return new TupleStackDriverAdapter(new TupleStackDriver(builder.Id!.Value, builder.Name!, builder.Surname!, builder.Seniority!.Value));
         }
 
         public override Bytebus CreateBytebus(BytebusBuilder builder)
