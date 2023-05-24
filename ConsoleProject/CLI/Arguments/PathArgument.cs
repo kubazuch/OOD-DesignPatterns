@@ -16,9 +16,9 @@ namespace ConsoleProject.CLI.Arguments
         {
             var parent = Path.GetDirectoryName(arg);
             if (!string.IsNullOrEmpty(parent) && !Directory.Exists(parent))
-                throw new ArgumentException($"Cannot open file at nonexistent directory `§l{parent}§l`");
+                throw new ArgumentException($"Cannot open file at nonexistent directory `{parent}`");
             if (_mustExist && !File.Exists(arg))
-                throw new ArgumentException($"Cannot open nonexistent file `§l{arg}§l`");
+                throw new ArgumentException($"Cannot open nonexistent file `{arg}`");
 
             return arg;
         }

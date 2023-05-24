@@ -90,38 +90,48 @@ namespace ConsoleProject
                 .Calls((_, _, _) => Stop()));
 
             _commandDispatcher.Register(CommandParser.New("list", "Prints all objects of a particular type")
-                .WithUsageDetails("Prints to the console all of the objects of class given by `§lname_of_the_class§l`, where printing an object means listing all of its non reference fields.")
+                .WithUsageDetails("Prints to the console all of the objects of class given by `name_of_the_class`, where printing an object means listing all of its non reference fields.")
                 .WithArg(new TypeArgument(DataManager, true))
+#if !HISTORY
                 .Calls((args, _, _) => new ListCommand((NamedCollection)args[0]!)));
+#else
+                .Calls((args, _, _) => new ListCommand((NamedCollection)args[0]!).Execute()));
+#endif
 
             _commandDispatcher.Register(CommandParser.New("find", "Prints objects matching certain conditions")
-                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t§l<name_of_field>=|<|><value>§l\n" +
-                                  "\nwhere `§l=|<|>§l` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `§l=§l` is allowed. " +
+                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t*<name_of_field>=|<|><value>*\n" +
+                                  "\nwhere `=|<|>` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `=` is allowed. " +
                                   "If a value were to contain spaces it should be placed inside quotation marks.")
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithVararg(new PredicateArgument(true))
                 .WithParser(PredicateParser)
+#if !HISTORY
                 .Calls((args, _, _) => new FindCommand((NamedCollection)args[0]!,
                     args.Skip(1).Select(x => (EntityPredicate)x!).ToList())));
+#else
+                .Calls((args, _, _) => new FindCommand((NamedCollection)args[0]!,
+                    args.Skip(1).Select(x => (EntityPredicate)x!).ToList()).Execute()));
+#endif
 
             _commandDispatcher.Register(CommandParser.New("add", "Adds a new object of a particular type")
-                .WithUsageDetails("\nwhere `§lbase|secondary§l` defines the §lrepresentation§l in which the object should be created. After receiving the first line the program presents the user with names of all " +
+                .WithUsageDetails("\nwhere `base|secondary` defines the *representation* in which the object should be created. After receiving the first line the program presents the user with names of all " +
                                   "of the atomic non reference fields of this particular class. The program waits for further instructions from the user describing the values of the fields of the object that is " +
-                                  "supposed to be created with the §ladd§l command. The format for each line is as follows: \n\n\t§l<name_of_field>=<value>§l\n\nA line like that means that the value of the field " +
-                                  "`§lname_of_field§l` for the newly created object will be equal to `§lvalue§l`. The user can enter however many lines they want in such a format (even repeating the fields that they " +
-                                  "have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:\n\n\t§lDONE§l or §lEXIT§l\n\nAfter receiving " +
-                                  "the §lDONE§r command the creation process finishes and the program adds a new object described by the user to the collection. After receiving the §lEXIT§r command the creation " +
+                                  "supposed to be created with the *add* command. The format for each line is as follows: \n\n\t*<name_of_field>=<value>*\n\nA line like that means that the value of the field " +
+                                  "`name_of_field` for the newly created object will be equal to `value`. The user can enter however many lines they want in such a format (even repeating the fields that they " +
+                                  "have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:\n\n\t*DONE* or *EXIT*\n\nAfter receiving " +
+                                  "the *DONE* command the creation process finishes and the program adds a new object described by the user to the collection. After receiving the *EXIT* command the creation " +
                                   "process also finishes but no new object is created and nothing is added to the collection. The data provided by the user is also discarded.")
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithArg(new EnumArgument<AbstractFactory>(AbstractFactory.Mapping, true, "representation"))
                 .Calls(AddCommand.AddCall));
 
+#if !HISTORY
             _commandDispatcher.Register(CommandParser.New("queue", "Command queue commands")
                 .WithSubcommand(CommandParser.New("print", "Prints all commands currently stored in the queue")
-                    .WithUsageDetails("Prints the name of each commandTodo stored in the queue along with all of its parameters in a human-readable form.")
+                    .WithUsageDetails("Prints the name of each command stored in the queue along with all of its parameters in a human-readable form.")
                     .Calls((_, _, _) => QueueCommand.PrintCall(_commandDispatcher)))
                 .WithSubcommand(CommandParser.New("export", "Exports all commands currently stored in the queue to the specified file")
-                    .WithUsageDetails("Saves all commands from the queue to the file. There are supported two formats `XML`(default) and `plaintext`. The structure of XML should contain only necessary fields. The plain text format should be the same as it is in the commandTodo line – that means that pasting the content of the file to the console should add stored commands.")
+                    .WithUsageDetails("Saves all commands from the queue to the file. There are supported two formats `XML` (default) and `plaintext`. The structure of XML should contain only necessary fields. The plain text format should be the same as it is in the command line – that means that pasting the content of the file to the console should add stored commands.")
                     .WithArg(new PathArgument(true))
                     .WithArg(new EnumArgument(new List<string> { "XML", "plaintext" }, false, "format"))
                     .Calls((args, _, _) => QueueCommand.ExportCall(_commandDispatcher, args)))
@@ -135,16 +145,39 @@ namespace ConsoleProject
                     .WithUsageDetails("This command loads exported commands saved in a given file to the end of the queue. The loaded command should be in the same order as they were during exporting. Both file formats are supported: XML and plain - text.")
                     .WithArg(new PathArgument(true, mustExist: true))
                     .Calls((args, _, _) => QueueCommand.ImportCall(_commandDispatcher, args))));
+#else
+            _commandDispatcher.Register(CommandParser.New("export","Exports command history")
+                .WithUsageDetails("Saves all commands from the history to the file. There are supported two formats `XML`(default) and `plaintext`. The structure of XML should contain only necessary fields. The plain text format should be the same as it is in the command line – that means that pasting the content of the file to the console should add stored commands.")
+                .WithArg(new PathArgument(true))
+                .WithArg(new EnumArgument(new List<string> { "XML", "plaintext" }, false, "format"))
+                .Calls((args, _, _) => QueueCommand.ExportCall(_commandDispatcher, args)));
 
+            _commandDispatcher.Register(CommandParser.New("load", "Loads commands and executes them")
+                .WithUsageDetails("This command loads exported commands saved in a given file and executes them in order of file. The loaded command should be in the same order as they were during exporting. Both file formats are supported: XML and plain - text.")
+                .WithArg(new PathArgument(true, mustExist: true))
+                .Calls((args, _, _) => QueueCommand.ImportCall(_commandDispatcher, args)));
+
+            _commandDispatcher.Register(CommandParser.New("history", "Prints command history")
+                .WithUsageDetails("Prints (from newest) the name of each executed command along with all of its parameters in a human-readable form.")
+                .Calls((_, _, _) => QueueCommand.PrintCall(_commandDispatcher)));
+
+            _commandDispatcher.Register(CommandParser.New("undo", "Undo last command")
+                .WithUsageDetails("Reverts the changes made by the most recently executed command.")
+                .Calls((_, _, _) => _commandDispatcher.Undo()));
+
+            _commandDispatcher.Register(CommandParser.New("redo", "Redo last command")
+                .WithUsageDetails("Reapplies the changes made by the most recently undone command.\n\nAttention: Execution of any undoable command after `undo` prohibits further `redo`!")
+                .Calls((_, _, _) => _commandDispatcher.Redo()));
+#endif
             _commandDispatcher.Register(CommandParser.New("edit", "Edits values of a given record")
-                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t§l<name_of_field>=|<|><value>§l\n" +
-                                  "\nwhere `§l=|<|>§l` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `§l=§l` is allowed. " +
-                                  "If a value were to contain spaces it should be placed inside quotation marks.\n\nThis command allows editing a given record if requirement conditions specify §lone record uniquely§l.\n" +
+                .WithUsageDetails("where requirements (space separated list of requirements) specify acceptable values of atomic non reference fields. They follow format:\n\n\t*<name_of_field>=|<|><value>*\n" +
+                                  "\nwhere `=|<|>` means any strong comparison operator. For numerical fields natural comparison will be used. Strings will use a lexicographic order. For other types only `=` is allowed. " +
+                                  "If a value were to contain spaces it should be placed inside quotation marks.\n\nThis command allows editing a given record if requirement conditions specify *one record uniquely*.\n" +
                                   "\nAfter receiving the first line the program presents the user with names of all of the atomic non reference fields of this particular class. The program waits for further instructions " +
-                                  "from the user describing the values of the fields of the object that is supposed to be edited with the §ledit§l command. The format for each line is as follows:\n\n\t§l<name_of_field>=<value>§l\n" +
-                                  "\nA line like that means that the value of the field `§lname_of_field§l` for the edited object will be equal to `§lvalue§l`. The user can enter however many lines they want in such a format " +
-                                  "(even repeating the fields that they have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:\n\n\t§lDONE§l or §lEXIT§l\n" +
-                                  "\nAfter receiving the §lDONE§l command the edition process finishes and the program schedules the edit into the queue. After receiving the §lEXIT§l command the edition process also finishes " +
+                                  "from the user describing the values of the fields of the object that is supposed to be edited with the *edit* command. The format for each line is as follows:\n\n\t*<name_of_field>=<value>*\n" +
+                                  "\nA line like that means that the value of the field `name_of_field` for the edited object will be equal to `value`. The user can enter however many lines they want in such a format " +
+                                  "(even repeating the fields that they have already defined -- in this case the previous value is overridden) describing the object until using one of the following commands:\n\n\t*DONE* or *EXIT*\n" +
+                                  "\nAfter receiving the *DONE* command the edition process finishes and the program schedules the edit into the queue. After receiving the *EXIT* command the edition process also finishes " +
                                   "but no edits are done. The data provided by the user is also discarded.")
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithVararg(new PredicateArgument(true))
@@ -152,7 +185,7 @@ namespace ConsoleProject
                 .Calls(EditCommand.EditCall));
 
             _commandDispatcher.Register(CommandParser.New("delete", "Removes given record from collections")
-                .WithUsageDetails("This command allows deleting a given record if requirement conditions (which work the same as in the find and edit command) specify one record uniquely.")
+                .WithUsageDetails("This command allows deleting a given record if requirement conditions (which work the same as in the *find* and *edit* command) specify one record uniquely.")
                 .WithArg(new TypeArgument(DataManager, true))
                 .WithVararg(new PredicateArgument(true))
                 .WithParser(PredicateParser)

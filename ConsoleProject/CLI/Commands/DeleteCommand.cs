@@ -14,6 +14,9 @@ namespace ConsoleProject.CLI.Commands
         private List<EntityPredicate> _predicates;
 
         private Predicate<object> _predicate;
+#if HISTORY
+        private Entity _deleted;
+#endif
 
         public DeleteCommand()  : base("delete") {}
 
@@ -37,15 +40,36 @@ namespace ConsoleProject.CLI.Commands
             }
 
             if (count != 1)
-                throw new ArgumentException($"Predicate `§l{string.Join("§l and §l", _predicates)}§l` should specify one record uniquely, found: §l{count}");
+                throw new ArgumentException($"Predicate `{string.Join("§l and §l", _predicates)}` should specify one record uniquely, found: §l{count}");
 
             _collection.Delete(entity);
+#if HISTORY
+            _deleted = entity;
+#endif
 
             Log.WriteLine($"§aRemoved §l{_collection.Name}§a");
 
+#if !HISTORY
             entity.Dispose();
+#endif
         }
 
+#if HISTORY
+        public override void Undo()
+        {
+            _collection.Add(_deleted);
+
+            Log.WriteLine($"§a*Undo*: Removed §l{_collection.Name}§a");
+        }
+
+        public override void Redo()
+        {
+            _collection.Delete(_deleted);
+
+            Log.WriteLine($"§a*Redo*: Removed §l{_collection.Name}§a");
+        }
+
+#endif
         public override string ToString()
         {
             var sb = new StringBuilder();

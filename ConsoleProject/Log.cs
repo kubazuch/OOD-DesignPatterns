@@ -8,6 +8,8 @@ namespace ConsoleProject
     public static class Log
     {
         private static readonly Regex Regex = new(@"(§[0-9a-flr])", RegexOptions.Compiled);
+        private static readonly Regex Bold = new(@"(?<!\\)\*(.*?[^\\])\*", RegexOptions.Compiled);
+        private static readonly Regex Emph = new(@"(?<!\\)`(.*?[^\\])`", RegexOptions.Compiled);
 
         public static void Write(StreamWriter writer, string s)
         {
@@ -26,8 +28,15 @@ namespace ConsoleProject
             Write(writer,s + "\n");
         }
 
-        public static void Write(string s)
+        public static void Write(string s, bool formatted = true)
         {
+            if (formatted)
+            {
+                s = Bold.Replace(s, match => $"§l{match.Groups[1].Value}§l");
+                s = Emph.Replace(s, match => $"`§l{match.Groups[1].Value}§l`");
+                s = s.Replace("\\*", "*").Replace("\\`", "`");
+            }
+
             var split = Regex.Split(s);
             var old = Console.ForegroundColor;
             foreach (var item in split)
@@ -49,7 +58,7 @@ namespace ConsoleProject
             Console.ForegroundColor = old;
         }
 
-        public static void WriteLine(string s = "")
+        public static void WriteLine(string s = "", bool formatted = true)
         {
             Write(s + "\n");
         }

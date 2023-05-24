@@ -17,7 +17,10 @@ namespace ConsoleProject.CLI.Commands
         private NamedCollection _collection;
         private List<EntityPredicate> _predicates;
         private AbstractBuilder _builder;
-
+#if HISTORY
+        private AbstractBuilder _memento;
+        private Entity _entity;
+#endif
         private Predicate<object> _predicate;
 
         public EditCommand() : base("edit") {}
@@ -77,7 +80,7 @@ namespace ConsoleProject.CLI.Commands
                 }
                 else
                 {
-                    Log.WriteLine($"§4Unknown subcommand: `§l{cmd}§4`. Possible subcommands: §cEXIT, DONE and assignments of form: field=value");
+                    Log.WriteLine($"§4Unknown subcommand: `{cmd}`. Possible subcommands: §lEXIT, DONE and assignments of form: field=value");
                 }
             } while (true);
 
@@ -97,16 +100,48 @@ namespace ConsoleProject.CLI.Commands
             }
 
             if (count != 1)
-                throw new ArgumentException($"Predicate `§l{string.Join("§l and §l", _predicates)}§l` should specify one record uniquely, found: §l{count}");
+                throw new ArgumentException($"Predicate `{string.Join("§l and §l", _predicates)}` should specify one record uniquely, found: §l{count}");
+
+#if HISTORY
+            _memento = AbstractBuilder.GetByType(_collection.Name, false);
+            _entity = entity!;
+#endif
 
             foreach (var field in _builder.Fields.Values.Where(field => field.Value != null))
             {
+#if HISTORY
+                _memento.Fields[field.Name].Value = ((IRefractive) entity!)[field.Name];
+#endif
                 ((IRefractive)entity!)[field.Name] = field.Value;
             }
 
             Log.WriteLine($"§aEdited §l{_collection.Name}§a:");
             Log.WriteLine(entity.ToString());
         }
+
+#if HISTORY
+        public override void Undo()
+        {
+            foreach (var field in _memento.Fields.Values.Where(field => field.Value != null))
+            {
+                ((IRefractive)_entity!)[field.Name] = field.Value;
+            }
+
+            Log.WriteLine($"§a*Undo*: Edited §l{_collection.Name}§a:");
+            Log.WriteLine(_entity.ToString());
+        }
+
+        public override void Redo()
+        {
+            foreach (var field in _builder.Fields.Values.Where(field => field.Value != null))
+            {
+                ((IRefractive)_entity!)[field.Name] = field.Value;
+            }
+
+            Log.WriteLine($"§a*Redo*: Edited §l{_collection.Name}§a:");
+            Log.WriteLine(_entity.ToString());
+        }
+#endif
 
         public override string ToString()
         {

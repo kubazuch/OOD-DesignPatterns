@@ -93,7 +93,7 @@ namespace ConsoleProject.CLI
                 if (context.Count == 0)
                     throw new ArgumentException($"Missing subcommand.\n\tUsage: §l{this}");
 
-                throw new ArgumentException($"Invalid subcommand `§l{context[0]}§r`.\n\tUsage: §l{this}");
+                throw new ArgumentException($"Invalid subcommand `{context[0]}`.\n\tUsage: §l{this}");
             }
 
             var args = Parse(context);
@@ -143,7 +143,7 @@ namespace ConsoleProject.CLI
             Log.WriteLine();
 
             if (HasSubcommands)
-                Log.WriteLine($"§3This command has subcommands. For more info try: `§lhelp {FullName} {string.Join('|', Subcommands.Select(kv => kv.Key))}§l`\n");
+                Log.WriteLine($"§3This command has subcommands. For more info try: `help {FullName} {string.Join('|', Subcommands.Select(kv => kv.Key))}`\n");
             
             if(UsageDetails != null)
                 Log.WriteLine(UsageDetails);

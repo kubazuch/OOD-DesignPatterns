@@ -16,6 +16,9 @@ namespace ConsoleProject.CLI.Commands
         private NamedCollection _collection;
         private AbstractFactory _factory;
         private AbstractBuilder _builder;
+#if HISTORY
+        private Entity _created;
+#endif
 
         public AddCommand() : base("add") {}
 
@@ -72,7 +75,7 @@ namespace ConsoleProject.CLI.Commands
                 }
                 else
                 {
-                    Log.WriteLine($"§4Unknown subcommand: `§l{cmd}§4`. Possible subcommands: §cEXIT, DONE and assignments of form: field=value");
+                    Log.WriteLine($"§4Unknown subcommand: `{cmd}`. Possible subcommands: §lEXIT, DONE and assignments of form: field=value");
                 }
             } while (true);
 
@@ -81,12 +84,31 @@ namespace ConsoleProject.CLI.Commands
 
         public override void Execute()
         {
-            Entity created = _factory.CreateEntity(_builder!);
+            var created = _factory.CreateEntity(_builder!);
             created.SetVault(App.Instance.DataManager.Vault);
             _collection.Add(created);
             Log.WriteLine($"§aCreated new §l{_collection.Name}§a:");
             Log.WriteLine(created.ToString());
+#if HISTORY
+            _created = created;
+#endif
         }
+
+#if HISTORY
+        public override void Undo()
+        {
+            _collection.Delete(_created);
+            Log.WriteLine($"§a*Undo*: Created new §l{_collection.Name}§a:");
+            Log.WriteLine(_created.ToString());
+        }
+
+        public override void Redo()
+        {
+            _collection.Add(_created);
+            Log.WriteLine($"§a*Redo*: Created new §l{_collection.Name}§a:");
+            Log.WriteLine(_created.ToString());
+        }
+#endif
 
         public override string ToString()
         {

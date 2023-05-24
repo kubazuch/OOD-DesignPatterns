@@ -17,7 +17,7 @@ namespace ConsoleProject.CLI.Arguments
         public override ICollection Parse(string arg)
         {
             if (!_data.Mapping.TryGetValue(arg, out var collection))
-                throw new ArgumentException($"Unknown type: `§l{arg}§r`. Possible types: §l{string.Join(", ", _data.Mapping.Keys)}");
+                throw new ArgumentException($"Unknown type: `{arg}`. Possible types: §l{string.Join(", ", _data.Mapping.Keys)}");
 
             return new NamedCollection(arg, collection);
         }

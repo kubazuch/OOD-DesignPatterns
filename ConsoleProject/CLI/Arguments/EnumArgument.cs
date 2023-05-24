@@ -17,7 +17,7 @@ namespace ConsoleProject.CLI.Arguments
         public override string Parse(string arg)
         {
             if (!_keys.Contains(arg))
-                throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _keys)}");
+                throw new ArgumentException($"Invalid value: `{arg}`. Possible values: §l{string.Join(", ", _keys)}");
             
             return arg;
         }
@@ -37,7 +37,7 @@ namespace ConsoleProject.CLI.Arguments
         public override T Parse(string arg)
         {
             if (!_dictionary.TryGetValue(arg, out T value))
-                throw new ArgumentException($"Invalid value: `§l{arg}§r`. Possible values: §l{string.Join(", ", _dictionary.Keys)}");
+                throw new ArgumentException($"Invalid value: `{arg}`. Possible values: §l{string.Join(", ", _dictionary.Keys)}");
 
             return value;
         }

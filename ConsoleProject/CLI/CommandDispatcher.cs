@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ConsoleProject.CLI.Arguments;
+using ConsoleProject.CLI.Commands;
 
 namespace ConsoleProject.CLI
 {
@@ -12,15 +13,25 @@ namespace ConsoleProject.CLI
     {
         private readonly Dictionary<string, CommandParser> _registry;
 
+#if !HISTORY
         internal CommandQueue CommandQueue;
+#else
+        internal CommandHistory CommandHistory;
+        internal Stack<Command> RedoStack;
+#endif
 
         public CommandDispatcher()
         {
             _registry = new Dictionary<string, CommandParser>();
+#if !HISTORY
             CommandQueue = new CommandQueue();
+#else
+            CommandHistory = new CommandHistory();
+            RedoStack = new Stack<Command>();
+#endif
 
             Register(CommandParser.New("help", "Prints help information for commands")
-                .WithUsageDetails("If no `§lcommand§l` is given, prints all available commands with short descriptions. Otherwise, prints full `§lcommand§l` description and details.")
+                .WithUsageDetails("If no `command` is given, prints all available commands with short descriptions. Otherwise, prints full `command` description and details.")
                 .WithVararg(new CommandArgument<string>("command"))
                 .Calls((args, _, _) =>
                 {
@@ -44,7 +55,7 @@ namespace ConsoleProject.CLI
         public void Register(CommandParser command)
         {
             if (_registry.ContainsKey(command.Name))
-                throw new DuplicateNameException($"Command with name `§l{command.Name}§l` is already registered!");
+                throw new DuplicateNameException($"Command with name `{command.Name}` is already registered!");
             _registry[command.Name] = command;
         }
 
@@ -87,12 +98,47 @@ namespace ConsoleProject.CLI
 
             if (!_registry.TryGetValue(result[0], out var cmd))
             {
-                throw new ArgumentException($"Unknown command: `§l{result[0]}§r`. Type `§lhelp§l` for help");
+                throw new ArgumentException($"Unknown command: `{result[0]}`. Type `help` for help");
             }
 
             var command = cmd.Execute(result.Skip(1).ToList(), reader, verbose);
-            if (command != null)
-                CommandQueue.Enqueue(command);
+
+            if (command == null) return;
+#if !HISTORY
+            CommandQueue.Enqueue(command);
+#else
+            command.Execute();
+            RedoStack.Clear();
+            CommandHistory.Push(command);
+#endif
         }
+
+#if HISTORY
+        public void Undo()
+        {
+            if (CommandHistory.Count == 0)
+            {
+                Log.WriteLine("§eThere is nothing to undo.");
+                return;
+            }
+
+            var command = CommandHistory.Pop();
+            command.Undo();
+            RedoStack.Push(command);
+        }
+
+        public void Redo()
+        {
+            if (RedoStack.Count == 0)
+            {
+                Log.WriteLine("§eThere is nothing to redo.");
+                return;
+            }
+
+            var command = RedoStack.Pop();
+            command.Redo();
+            CommandHistory.Push(command);
+        }
+#endif
     }
 }

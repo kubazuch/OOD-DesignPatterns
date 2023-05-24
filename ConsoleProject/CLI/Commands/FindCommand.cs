@@ -28,6 +28,12 @@ namespace ConsoleProject.CLI.Commands
 
         public override void Execute() => Algorithms.Print(_collection, _predicate);
 
+#if HISTORY
+        public override void Undo() {}
+
+        public override void Redo() {}
+
+#endif
         public override string ToCommandline() => $"{Name} {_collection.Name} {string.Join(' ', _predicates)}";
 
         public override string ToString()

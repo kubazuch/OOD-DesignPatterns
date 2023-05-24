@@ -1,4 +1,5 @@
-﻿namespace ConsoleProject
+﻿
+namespace ConsoleProject
 {
     internal class Program
     {

@@ -2,12 +2,12 @@
 {
     internal class MissingArgumentException : System.ArgumentException
     {
-        public MissingArgumentException(CommandParser commandTodo, int id, string name)
-            : base($"Missing required argument #{id}: `§l{name}§r`.\n\tUsage: §l{commandTodo}")
+        public MissingArgumentException(CommandParser command, int id, string name)
+            : base($"Missing required argument #{id}: `{name}`.\n\tUsage: §l{command}")
         { }
 
         public MissingArgumentException(string command, int id, string name)
-            : base($"Missing required argument #{id}: `§l{name}§r`.\n\tUsage: §l{command}")
+            : base($"Missing required argument #{id}: `{name}`.\n\tUsage: §l{command}")
         {
         }
     }

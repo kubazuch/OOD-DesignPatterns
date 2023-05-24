@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -8,19 +9,21 @@ namespace ConsoleProject.CLI.Commands
 {
     public static class QueueCommand
     {
-        //private static readonly EnumArgument SubcommandArg = new(new List<string> { "print", "export", "commit", "dismiss", "load" }, "subcommand", true);
-        //private static readonly PathArgument PathArg = new(true);
-        //private static readonly EnumArgument FormatArg = new(new List<string> { "XML", "plaintext" }, "subcommand", false);
 
         public static void PrintCall(CommandDispatcher dispatcher)
         {
+#if !HISTORY
             foreach (var cmd in dispatcher.CommandQueue)
+#else
+            foreach (var cmd in dispatcher.CommandHistory)
+#endif
             {
                 Log.WriteLine(cmd.ToString());
                 Log.WriteLine();
             }
         }
 
+#if !HISTORY
         public static void CommitCall(CommandDispatcher dispatcher)
         {
             var i = 1;
@@ -40,6 +43,7 @@ namespace ConsoleProject.CLI.Commands
             }
         }
 
+#endif
         public static void ExportCall(CommandDispatcher dispatcher, List<object?> args)
         {
             var path = (string) args[0]!;
@@ -58,29 +62,40 @@ namespace ConsoleProject.CLI.Commands
             void SerializeXML()
             {
                 using var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, IndentChars = "    " });
+#if !HISTORY
                 var serializer = new XmlSerializer(typeof(CommandQueue));
                 serializer.Serialize(writer, dispatcher.CommandQueue);
-                Log.WriteLine($"§aCommand queue exported to `§l{path}§a` as XML");
+#else
+                var serializer = new XmlSerializer(typeof(CommandHistory));
+                serializer.Serialize(writer, dispatcher.CommandHistory);
+#endif
+                Log.WriteLine($"§aCommand queue exported to `{path}` as XML");
             }
 
             void SerializePlain()
             {
                 using var writer = File.CreateText(path);
+#if !HISTORY
                 foreach (var cmd in dispatcher.CommandQueue)
+#else
+                foreach (var cmd in dispatcher.CommandHistory.Reverse())
+#endif
                 {
                     Log.WriteLine(writer, cmd.ToCommandline());
                     Log.WriteLine(writer);
                 }
-                Log.WriteLine($"§aCommand queue exported to `§l{path}§a` as plaintext");
+                Log.WriteLine($"§aCommand queue exported to `{path}` as plaintext");
             }
         }
 
+#if !HISTORY
         public static void DismissCall(CommandDispatcher dispatcher)
         {
             dispatcher.CommandQueue.Clear();
             Log.WriteLine($"§aCommand queue cleared");
         }
 
+#endif
         public static void ImportCall(CommandDispatcher dispatcher, List<object?> args)
         {
             var path = (string)args[0]!;
@@ -95,19 +110,26 @@ namespace ConsoleProject.CLI.Commands
                     DeserializePlain();
                     break;
                 default:
-                    throw new ArgumentException($"Unknown extension: `§l{ext}§l`");
+                    throw new ArgumentException($"Unknown extension: `{ext}`");
             }
 
             void DeserializeXML()
             {
                 using var reader = XmlReader.Create(path);
+#if !HISTORY
                 var serializer = new XmlSerializer(typeof(CommandQueue));
-                CommandQueue qu = (CommandQueue)serializer.Deserialize(reader);
+                var qu = (CommandQueue)serializer.Deserialize(reader);
 
                 while (qu.Count > 0)
                     dispatcher.CommandQueue.Enqueue(qu.Dequeue());
+#else
+                var serializer = new XmlSerializer(typeof(CommandHistory));
+                var qu = (CommandHistory)serializer.Deserialize(reader);
 
-                Log.WriteLine($"§aCommand queue imported from `§l{path}§l` as XML");
+                qu.Reverse().ToList().ForEach(x => dispatcher.CommandHistory.Push(x));
+#endif
+
+                Log.WriteLine($"§aCommand queue imported from `{path}` as XML");
             }
 
             void DeserializePlain()
@@ -131,7 +153,7 @@ namespace ConsoleProject.CLI.Commands
                     }
                 }
 
-                Log.WriteLine($"§aCommand queue imported from `§l{path}§l` as plaintext");
+                Log.WriteLine($"§aCommand queue imported from `{path}` as plaintext");
             }
         }
     }

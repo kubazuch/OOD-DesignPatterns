@@ -5,7 +5,7 @@ namespace ConsoleProject.CLI.Exception
     internal class TooManyArgumentsException : ArgumentException
     {
         public TooManyArgumentsException(CommandParser cmd)
-            : base($"Too many arguments for command `§l{cmd.FullName}§r`.\n\tUsage: §l{cmd}") 
+            : base($"Too many arguments for command `{cmd.FullName}`.\n\tUsage: §l{cmd}") 
         { }
 
         public TooManyArgumentsException(string usage)

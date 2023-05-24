@@ -26,6 +26,12 @@ namespace ConsoleProject.CLI.Commands
 
         public abstract void Execute();
 
+#if HISTORY
+        public abstract void Undo();
+
+        public abstract void Redo();
+
+#endif
         public abstract string ToCommandline();
 
         public abstract override string ToString();

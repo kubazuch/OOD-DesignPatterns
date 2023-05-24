@@ -20,6 +20,12 @@ namespace ConsoleProject.CLI.Commands
 
         public override void Execute() => Algorithms.ForEach(_collection.GetForwardIterator(), Console.WriteLine);
 
+#if HISTORY
+        public override void Undo() { }
+
+        public override void Redo() { }
+
+#endif
         public override string ToCommandline() => $"{Name} {_collection.Name}";
 
         public override string ToString()
